@@ -500,7 +500,7 @@
                         -30
                     ],
                     "behshape.init.beforeyeh": [
-                        -40,
+                        -59,
                         0
                     ],
                     "behshape.isol": [
@@ -1900,8 +1900,8 @@
                         -176
                     ],
                     "kaf.fina.expa": [
-                        54,
-                        -245
+                        8,
+                        -129
                     ],
                     "kaf.init": [
                         33,
@@ -3378,6 +3378,10 @@
                     "hah.init.beforeyeh": [
                         132,
                         83
+                    ],
+                    "hah.isol": [
+                        120,
+                        580
                     ],
                     "reh.isol": [
                         -81,
