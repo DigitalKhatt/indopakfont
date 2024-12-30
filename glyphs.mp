@@ -6103,7 +6103,7 @@ defchar(yehshape.isol,1610,-1,-1,-1);
 draw alefmaksura.isol.pic;
 
 enddefchar;
-beginchar(yehshape.fina,-1,-1,-1,-1);
+defchar(yehshape.fina,-1,-1,-1,-1);
 %%backgroundimage:images/behmediyehfina.jpg,-26,-634,1,0,0,1
 %%beginparams
 z1 = (499.922,-66.6013);
@@ -6139,8 +6139,7 @@ z3 .. tension 0.75 and 3.87957 ..
 %%endpaths
 %%beginbody
 
-savepicture:=1;
-endchar;
+enddefchar;
 defchar(yehshape.fina.ii,-1,-1,-1,-1);
 %%backgroundimage:images/yeh.fina.ii.jpg,-68.2099,-934.84,1,0,0,1
 %%beginparams
@@ -7266,7 +7265,11 @@ save path_,pic_,t_;
 picture pic_[];
 path path_[];
 
-path_0 := pathpart yehshape.fina.pic;
+yehshape.fina_(0,0);
+
+path_0 := pathpart currentpicture;
+
+currentpicture := nullpicture;
 
 z.t1 = (5,14);
 
@@ -7291,8 +7294,12 @@ path_4 := subpath(0, t_2) of path_2 .. subpath z.t1 of path_3
 .. subpath(t_1+1, length path_2  -1) of path_2
 .. cycle;
 
+
+
 fill path_4;
 
+rightanchor := rightanchor shifted (points1 - z10);
+tr_ := identity shifted(0,ypart (z10 - points1)); 
 
 
 enddefchar;
