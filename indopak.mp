@@ -9,3 +9,4 @@ lineheight := 135;
 penwidth := 135;
 joinvector := ljoinvector := rjoinvector := (20,lineheight); 
 nuqta := 1.4penwidth;
+noondepth := 200;

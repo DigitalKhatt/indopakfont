@@ -2887,6 +2887,8 @@ fill
 
 %%endpaths
 %%beginbody
+
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 savepicture:=1;
 endchar;
 defchar(seen.init,-1,-1,-1,-1);
@@ -3107,13 +3109,13 @@ brdmv ( (843.602,59.6159), (-4.96771,1.7861), (-3.46153,-31.3754) ) .. tension 1
  {left}(616.547,18.915) .. tension 1 and 2.08022 ..
  {left}(599.346,21.3196) .. tension 1.49388 and 1 ..
 (586.569,-2.34429) .. tension 1 and 0.85593 ..
- {left}(337.9,-235.022) .. tension 0.850507 and 1.05376 ..
+ {left}(338,-235) .. tension 0.850507 and 1.05376 ..
  {up} cycle
 ;
 
 %%endpaths
 %%beginbody
-
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 beginchar(lam.isol,1604,-1,-1,-1);
 %%backgroundimage:images/lam.isol.jpg,-99.224,-910.28,1,0,0,1
@@ -3140,6 +3142,8 @@ fill
 ;
 
 %%endpaths
+%%beginbody
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 endchar;
 defchar(lam.init,-1,-1,-1,-1);
 %%backgroundimage:images/lam.init.jpg,-2718.73,-1024.42,1,0,0,1
@@ -3954,7 +3958,7 @@ fill
 %%endpaths
 %%beginbody
 
-
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 
 enddefchar;
 defchar(noon.isol.expa,-1,-1,-1,-1);
@@ -3996,7 +4000,7 @@ leii0 ( (-309.106,169.655), z.max ) .. tension 0.814899 and 4.02508 ..
 %%endpaths
 %%beginbody
 
-tr_ := tr_ shifted (0,50);
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(noon.fina,-1,-1,-1,-1);
 %%backgroundimage:images/noon.fina.jpg,-143.135,-876.484,1,0,0,1
@@ -4023,12 +4027,12 @@ brdmv ( (478.578,29.6803), (0,0), (7.18182,-53.4056) ) {curl1} .. tension 1.3214
 
 %%endpaths
 %%beginbody
-
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(noon.fina.afterbeh,-1,-1,-1,-1);
 %%beginbody
 noon.fina_(0,-0.3);
-tr_ := tr_ shifted(0,behreh.yoffset);
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(noon.fina.expa,-1,-1,-1,-1);
 %%beginparams
@@ -4063,7 +4067,7 @@ tr_ := identity;
 draw pic_ shifted (z4 - z1);
 
 defAnchor(lowmarks,z.markexpa1,MarkAnchor);
-
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(noon.fina.expa.afterbeh,-1,-1,-1,-1);
 %%beginbody
@@ -4072,7 +4076,7 @@ defchar(noon.fina.expa.afterbeh,-1,-1,-1,-1);
 
 noon.fina.expa_(lefttatweel,0);
 
-tr_ := identity shifted(0,behreh.yoffset);
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 
 enddefchar;
 defchar(noon.fina.basmala,-1,-1,-1,-1);
@@ -4124,6 +4128,7 @@ brdmvi ( (534,37), (5,-2) ) --
 
 defAnchor(lowmarks,z.markexpa1,MarkAnchor);
 defAnchor(onedotup,z.markexpa2,MarkAnchor);
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(qaf.isol,-1,-1,-1,-1);
 %%backgroundimage:images/qaf.isol,25.7804,-963.056,1,0,0,1
@@ -4161,6 +4166,7 @@ fill
 
 savepicture:=1;
 defAnchor(defaultdotmarks_twodotsup   ,z.mark1,MarkAnchor);
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(qaf.fina,-1,-1,-1,-1);
 %%backgroundimage:images/qaf.fina.jpg,24.5066,-882.14,1,0,0,1
@@ -4206,6 +4212,7 @@ z2 {left} .. tension 1.05509 and 1.56463 ..
 %%beginbody
 
 defAnchor(defaultdotmarks_twodotsup   ,z.mark1,MarkAnchor);
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(feh.isol,-1,-1,-1,-1);
 %%backgroundimage:images/feh.isol.jpg,112.573,-907.952,1,0,0,1
@@ -5376,7 +5383,7 @@ fill
 %%beginbody
 
 setMarkAnchor(defaultmarkposition_lowmarks,z.mark1);
-
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(sad.init,-1,-1,-1,-1);
 %%backgroundimage:images/sad.init.jpg,-649,-1019,1,0,0,1
@@ -5589,7 +5596,7 @@ z10 rightjoinii
 
 
 sad.isol_(lefttatweel,righttatweel);
-
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(ain.isol,1593,-1,-1,-1);
 %%backgroundimage:images/ain.isol.jpg,28.889,-833,1,0,0,1
@@ -6097,6 +6104,7 @@ fill
 %%beginbody
 
 savepicture:=1;
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(yehshape.isol,1610,-1,-1,-1);
 %%beginbody
@@ -6138,7 +6146,7 @@ z3 .. tension 0.75 and 3.87957 ..
 
 %%endpaths
 %%beginbody
-
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(yehshape.fina.ii,-1,-1,-1,-1);
 %%backgroundimage:images/yeh.fina.ii.jpg,-68.2099,-934.84,1,0,0,1
@@ -6170,6 +6178,7 @@ setCursiveAnchor(yehcursive1rtl,z1,EntryAnchorRTL);
 setCursiveAnchor(yehcursive2rtl,z3,EntryAnchorRTL);
 setCursiveAnchor(yehcursive1,z1,EntryAnchor);
 setCursiveAnchor(yehcursive2,z3,EntryAnchor);
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(yehshape.fina.afterbeh,-1,-1,-1,-1);
 %%beginbody
@@ -6184,7 +6193,7 @@ setCursiveAnchor(behmediyehfina,z2, EntryAnchor);
 setCursiveAnchor(behmediyehfinartl,z2, EntryAnchorRTL);
 
 
-
+tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
 defchar(kaf.isol,1603,-1,-1,-1);
 %%backgroundimage:images/kaf.isol.jpg,-17.5277,-943.17,1,0,0,1
@@ -7043,7 +7052,7 @@ leii0 ( (-309.106,169.655), z.max ) .. tension 0.814899 and 4.02508 ..
 %%endpaths
 %%beginbody
 
-tr_ := tr_ shifted (0,50);
+tr_ := tr_ shifted (0,-80);
 enddefchar;
 defchar(expaform.ii,-1,-1,-1,-1);
 %%backgroundimage:images/kaf.fina.expa.jpg,-31.104,-946.944,1,0,0,1
@@ -7661,10 +7670,9 @@ path_4 := subpath(0, t_2) of path_2 & subpath z.t1 -(0,1) of path_3
 fill path_4;
 fill path_0.1  shifted (points1 - z10);
 
-tr_ := tr_ shifted (0,-150);
-
 defAnchor(defaultdotmarks_twodotsup,z.markexpa1,MarkAnchor);
 
+tr_ := tr_ shifted (0,60);
 
 enddefchar;
 defchar(behshape.init.bseen.basmala,-1,-1,-1,-1);
