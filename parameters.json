@@ -360,8 +360,8 @@
                         -111
                     ],
                     "behshape.fina.expa": [
-                        0,
-                        -172
+                        138,
+                        -68
                     ],
                     "behshape.init": [
                         21,
@@ -2121,7 +2121,7 @@
                     ],
                     "seen.fina": [
                         192,
-                        -168
+                        -64
                     ],
                     "seen.fina.expa": [
                         -277,
@@ -2180,8 +2180,8 @@
                         -13
                     ],
                     "yehshape.fina": [
-                        0,
-                        -200
+                        11,
+                        -38
                     ],
                     "yehshape.fina.afterbeh": [
                         20,
@@ -3449,10 +3449,6 @@
                 "meem.init.beforehah": [
                     -86,
                     -160
-                ],
-                "seen.isol": [
-                    -92,
-                    173
                 ]
             }
         }
