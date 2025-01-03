@@ -551,20 +551,30 @@ lookup rehwawcursive {
     pos cursive /^reh|^waw/ <anchor function afterrehwaw> <anchor -200 0>;
   } rehwawcursive.l1;
 
+  lookup rehwawcursive.rec.l1 {    
+    pos /^reh|^waw/ <100 0 100 0>;    
+  } rehwawcursive.rec.l1;
+
+  lookup rehwawcursive.rec.l2 {    
+    pos /^reh/ <-100 0 -100 0>;
+    pos /^waw/ <-50 0 -50 0>;
+  } rehwawcursive.rec.l2;
+
   lookup rehwawcursive.rec {
 
-    pos /^reh|^waw/'<100 0 100 0> (@marks{0,3})' /^behshape[.]init/' [twodotsdown onedotdown hamzabelow]' ;
+    pos /^reh|^waw/'lookup rehwawcursive.rec.l1 (@marks{0,3})' /^behshape[.]init/' [twodotsdown onedotdown hamzabelow]' ;
 
-    pos /^reh|^waw/'<100 0 100 0> (@marks{0,3})' /^alef.isol/' [kasra]' ;
+    pos /^reh|^waw/'lookup rehwawcursive.rec.l1 (@marks{0,3})' /^alef.isol/' [kasra]' ;
+
+    pos /^reh|^waw/'lookup rehwawcursive.rec.l2 [fatha]' [/^alef.isol/]';    
+
+    pos /^reh|^waw/'lookup rehwawcursive.rec.l2 (@marks{0,3})' [/^alef.isol/ heh.isol /^sad/ hamza.isol]' ([onedotup twodotsup]?)' ([shadda]?)' [fatha damma fathatan dammatan] ' ;    
       
     #pos /^reh|^waw/'<100 0 100 0> (@marks{0,3})' /[.]init/' ([twodotsdown onedotdown]|[shadda]? @lowmarks)' ;
 
   } rehwawcursive.rec;
 
-
   pos /^reh|^waw/'lookup rehwawcursive.rec  /[.]isol|[.]init/;
-
-  #pos /^reh|^waw/'  /[.]isol|[.]init/'lookup rehwawcursive.l1;
 
 } rehwawcursive;
 
@@ -602,9 +612,7 @@ lookup isolkern {
     pos /^lam.init.lamalef/ <0 0 50 0>;    
   } isolkern.o2;
 
-  pos [alef.fina.laf]' [hah.init]'<0 0 -100 0>;
-
-  
+  pos [alef.fina.lamalef]' [/^hah.init(?!\.beforemeem|\.beforeyeh)/]'<0 0 -100 0>;  
 
   pos [alef.isol /^alef.fina/]'lookup isolkern.o2 [/^lam.init/ /^alef.isol/]'lookup isolkern.o2;
 
