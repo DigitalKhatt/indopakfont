@@ -526,6 +526,12 @@ namespace indopak {
 
   }
 
+  CursiveAnchorFunc  IndoPak::getCursiveFunctions(QString functionName, Subtable* subtable) {
+      if (functionName == "afterrehwaw") {
+          return AfterRehWaw(*this, *(MarkBaseSubtable*)(subtable));
+      }
+  }
+
   CalcAnchor  IndoPak::getanchorCalcFunctions(QString functionName, Subtable* subtable) {
     if (functionName == "defaultmarkabovemark") {
       return Defaultmarkabovemark(*this, *(MarkBaseSubtable*)(subtable));
