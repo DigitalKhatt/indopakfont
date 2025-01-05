@@ -4,7 +4,7 @@
 %%
 
 nametable.familyName := "DigitalKhatt IndoPak";
-nametable.copyright := "Copyright (c) 2024 Amine Anane, Copyright © 2024 Tarteel Inc.";
+nametable.copyright := "Copyright (c) 2024 Amine Anane, Copyright (c) 2025 Muhammad Zeeshan Nasar, Copyright © 2024 Tarteel Inc.";
 lineheight := 135;
 penwidth := 135;
 joinvector := ljoinvector := rjoinvector := (20,lineheight); 
