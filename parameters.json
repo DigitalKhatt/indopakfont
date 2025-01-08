@@ -141,6 +141,10 @@
                         -45,
                         -13
                     ],
+                    "behshape.init.besad": [
+                        60,
+                        0
+                    ],
                     "behshape.medi": [
                         26,
                         70
@@ -221,6 +225,10 @@
                         -148,
                         56
                     ],
+                    "hah.medi.afterbeh.besad": [
+                        -83,
+                        0
+                    ],
                     "hah.medi.afterfeh": [
                         -99,
                         -33
@@ -228,6 +236,10 @@
                     "hah.medi.aftermeem": [
                         -172,
                         49
+                    ],
+                    "hah.medi.aftermeem.besad": [
+                        -80,
+                        20
                     ],
                     "hah.medi.ii": [
                         -68,
@@ -306,8 +318,8 @@
                         0
                     ],
                     "tah.fina": [
-                        332,
-                        -405
+                        160,
+                        -365
                     ],
                     "tah.init": [
                         68,
@@ -318,8 +330,8 @@
                         -392
                     ],
                     "tah.medi": [
-                        107,
-                        -371
+                        127,
+                        -311
                     ],
                     "tah.medi.beforeyeh": [
                         44,
@@ -407,7 +419,7 @@
                     ],
                     "behshape.init.beforenoon": [
                         18,
-                        -87
+                        -126
                     ],
                     "behshape.init.beforeseen": [
                         -9,
@@ -882,8 +894,8 @@
                         0
                     ],
                     "hah.medi.aftermeem": [
-                        154,
-                        57
+                        -86,
+                        33
                     ],
                     "hah.medi.beforeyeh": [
                         60,
@@ -908,6 +920,10 @@
                     "heh.init.beforeyeh": [
                         79,
                         4
+                    ],
+                    "heh.init.besad": [
+                        93,
+                        17
                     ],
                     "heh.isol": [
                         -21,
@@ -1103,11 +1119,11 @@
                     ],
                     "seen.medi.beforereh": [
                         1,
-                        0
+                        24
                     ],
                     "tah.fina": [
-                        279,
-                        64
+                        63,
+                        48
                     ],
                     "tah.medi": [
                         7,
@@ -1225,6 +1241,10 @@
                         41,
                         27
                     ],
+                    "behshape.init.besad": [
+                        80,
+                        0
+                    ],
                     "behshape.isol": [
                         81,
                         -32
@@ -1260,6 +1280,10 @@
                     "hah.medi.lam_hah": [
                         -163,
                         -37
+                    ],
+                    "heh.init.besad": [
+                        133,
+                        -5
                     ],
                     "heh.medi": [
                         110,
@@ -1488,6 +1512,10 @@
                     "sad.medi": [
                         28,
                         -201
+                    ],
+                    "sad.medi.besad": [
+                        144,
+                        0
                     ]
                 }
             }
@@ -1612,8 +1640,8 @@
             "fathadamma": {
                 "baseparameters": {
                     "tah.fina": [
-                        331,
-                        -402
+                        211,
+                        -382
                     ],
                     "tah.init": [
                         118,
@@ -1624,7 +1652,7 @@
                         -367
                     ],
                     "tah.medi": [
-                        133,
+                        153,
                         -315
                     ]
                 }
@@ -1632,8 +1660,8 @@
             "fathatandammatan": {
                 "baseparameters": {
                     "tah.fina": [
-                        320,
-                        -405
+                        200,
+                        -385
                     ],
                     "tah.isol": [
                         306,
@@ -1674,6 +1702,10 @@
                     "ain.init": [
                         -32,
                         3
+                    ],
+                    "ain.init.besad": [
+                        86,
+                        0
                     ],
                     "ain.init.finjani": [
                         -42,
@@ -1734,6 +1766,10 @@
                     "behshape.init.beforeyeh": [
                         -49,
                         -18
+                    ],
+                    "behshape.init.besad": [
+                        60,
+                        -20
                     ],
                     "behshape.isol": [
                         69,
@@ -1815,6 +1851,10 @@
                         -25,
                         -27
                     ],
+                    "hah.medi.afterbeh.besad": [
+                        -60,
+                        -40
+                    ],
                     "hah.medi.afterbeh.pluslt_150": [
                         -56,
                         0
@@ -1830,6 +1870,10 @@
                     "hah.medi.aftermeem": [
                         -70,
                         -68
+                    ],
+                    "hah.medi.aftermeem.besad": [
+                        -80,
+                        -40
                     ],
                     "hah.medi.ii": [
                         -57,
@@ -1858,6 +1902,10 @@
                     "heh.init": [
                         11,
                         -8
+                    ],
+                    "heh.init.besad": [
+                        132,
+                        11
                     ],
                     "heh.init.pluslt_260": [
                         19,
@@ -2046,6 +2094,10 @@
                     "meem.init.beforehah": [
                         -39,
                         -15
+                    ],
+                    "meem.init.besad": [
+                        84,
+                        -12
                     ],
                     "meem.isol": [
                         97,
@@ -2432,8 +2484,8 @@
                         0
                     ],
                     "fehshape.medi": [
-                        90,
-                        12
+                        162,
+                        -12
                     ],
                     "heh.init": [
                         194,
@@ -2533,11 +2585,15 @@
                 "baseparameters": {
                     "behshape.init": [
                         69,
-                        46
+                        61
                     ],
                     "behshape.init.beforeyeh": [
                         23,
                         -173
+                    ],
+                    "behshape.init.besad": [
+                        100,
+                        80
                     ],
                     "hah.init": [
                         11,
@@ -2552,8 +2608,8 @@
             "twodotsdown": {
                 "baseparameters": {
                     "behshape.init": [
-                        69,
-                        46
+                        41,
+                        74
                     ]
                 }
             }
@@ -2564,8 +2620,8 @@
             "onedotdown": {
                 "baseparameters": {
                     "behshape.init.beforeseen": [
-                        46,
-                        57
+                        18,
+                        85
                     ],
                     "behshape.init.beforeyeh": [
                         46,
@@ -2576,12 +2632,28 @@
             "twodotsdown": {
                 "baseparameters": {
                     "behshape.init": [
-                        57,
-                        46
+                        79,
+                        -209
+                    ],
+                    "behshape.init.beforehah": [
+                        48,
+                        120
+                    ],
+                    "behshape.init.beforehahyeh": [
+                        0,
+                        57
+                    ],
+                    "behshape.init.beforenoon": [
+                        48,
+                        84
                     ],
                     "behshape.init.beforereh": [
                         34,
-                        11
+                        74
+                    ],
+                    "behshape.init.beforeseen": [
+                        49,
+                        -220
                     ]
                 }
             }
@@ -2598,6 +2670,10 @@
                     "behshape.init.beforeyeh": [
                         22,
                         -128
+                    ],
+                    "behshape.init.besad": [
+                        120,
+                        106
                     ],
                     "hah.init": [
                         0,
@@ -2616,12 +2692,12 @@
             "twodotsdown": {
                 "baseparameters": {
                     "behshape.init": [
-                        69,
-                        46
+                        73,
+                        72
                     ],
                     "behshape.init.beforenoon": [
-                        34,
-                        34
+                        10,
+                        58
                     ]
                 }
             }
@@ -2640,14 +2716,34 @@
             "twodotsdown": {
                 "baseparameters": {
                     "behshape.init": [
-                        57,
-                        57
+                        73,
+                        83
+                    ],
+                    "behshape.init.beforehah": [
+                        48,
+                        142
+                    ],
+                    "behshape.init.beforenoon": [
+                        12,
+                        47
                     ],
                     "behshape.init.beforeseen": [
-                        0,
-                        36
+                        -44,
+                        80
                     ]
                 }
+            }
+        }
+    },
+    "lowmarkafterwawandreh.hamzabelow.1": {
+        "subtable1": {
+            "parameters": {
+                "hamzabelow": [
+                    -28,
+                    28,
+                    0,
+                    0
+                ]
             }
         }
     },
@@ -2668,12 +2764,16 @@
             "kasra": {
                 "baseparameters": {
                     "behshape.init": [
-                        58,
-                        -150
+                        63,
+                        -288
                     ],
                     "behshape.init.beforeyeh": [
                         34,
                         -347
+                    ],
+                    "behshape.init.besad": [
+                        168,
+                        -148
                     ],
                     "behshape.isol": [
                         0,
@@ -2716,20 +2816,20 @@
                         104
                     ],
                     "behshape.init.beforeyeh": [
-                        0,
-                        -208
+                        29,
+                        -196
                     ],
                     "fehshape.init": [
-                        58,
-                        92
+                        106,
+                        164
                     ],
                     "fehshape.init.beforeyeh": [
                         11,
-                        -185
+                        -265
                     ],
                     "lam.init": [
-                        34,
-                        69
+                        58,
+                        165
                     ],
                     "lam.init.allah": [
                         -11,
@@ -2740,8 +2840,8 @@
                         92
                     ],
                     "lam.init.beforeyeh": [
-                        23,
-                        -173
+                        -17,
+                        -212
                     ],
                     "sad.init": [
                         115,
@@ -2769,7 +2869,7 @@
                 "baseparameters": {
                     "behshape.init": [
                         57,
-                        -185
+                        -278
                     ],
                     "behshape.init.beforehah": [
                         0,
@@ -2777,11 +2877,15 @@
                     ],
                     "behshape.init.beforenoon": [
                         34,
-                        -173
+                        -287
                     ],
                     "behshape.init.beforeyeh": [
                         57,
                         -254
+                    ],
+                    "behshape.init.besad": [
+                        160,
+                        -195
                     ],
                     "behshape.isol": [
                         0,
@@ -2840,8 +2944,12 @@
             "kasra": {
                 "baseparameters": {
                     "behshape.init.beforeyeh": [
-                        46,
-                        -185
+                        -34,
+                        -265
+                    ],
+                    "lam.init": [
+                        60,
+                        140
                     ],
                     "sad.init": [
                         115,
@@ -2860,6 +2968,24 @@
                         -197
                     ]
                 }
+            }
+        }
+    },
+    "rehwawcursive.l1": {
+        "subtable1": {
+            "entryParameters": {
+                "behshape.init": [
+                    -22,
+                    -55
+                ],
+                "behshape.init.beforenoon": [
+                    -24,
+                    -71
+                ],
+                "behshape.init.beforereh": [
+                    0,
+                    -20
+                ]
             }
         }
     },
