@@ -12,9 +12,9 @@ nuqta := 1.4penwidth;
 noondepth := 200;
 noonexpadepth := 200;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-pair ljoinvectorii;ljoinvectorii := (0,3/5lineheight); 
+pair ljoinvectorii;ljoinvectorii := (0,4/5lineheight); 
 lresiduii := 1lineheight;
-ltensionii := 2;
+ltensionii := 1.2;
 secondarydef p leftjoinii q =
    hide(
     setdef(x.lft.offset,nuqta + 50);

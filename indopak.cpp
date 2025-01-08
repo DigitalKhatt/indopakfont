@@ -6,7 +6,7 @@
 #include "GlyphVis.h"
 #include <algorithm>
 #include "qregularexpression.h"
-#include "defaultmarkpositions.h"
+#include "markpositions.h"
 #include "metafont.h"
 #include "qdebug.h"
 
@@ -525,9 +525,7 @@ namespace indopak {
 
 		//before sad/tah
 		layout->expandableGlyphs["heh.medi.besad"] = { 0,0,20,0 };
-		layout->expandableGlyphs["behshape.medi.besad"] = { 0,0,20,0 };
-		layout->expandableGlyphs["behshape.medi.expa.besad"] = { 0,0,20,0 };
-		layout->expandableGlyphs["behshape.medi.besad"] = { 0,0,20,0 };
+		layout->expandableGlyphs["behshape.medi.besad"] = { 20,0,20,0 };				
 		layout->expandableGlyphs["hah.medi.besad"] = { 0,0,20,0 };
 		layout->expandableGlyphs["hah.medi.afterbeh.besad"] = { 0,0,20,0 };
 		layout->expandableGlyphs["hah.medi.lam_hah.besad"] = { 0,0,20,0 };
@@ -549,12 +547,15 @@ namespace indopak {
 	}
 
 	CursiveAnchorFunc  IndoPak::getCursiveFunctions(QString functionName, Subtable* subtable) {
+		CursiveAnchorFunc tret;
 		if (functionName == "afterrehwaw") {
 			return AfterRehWaw(*this, *(MarkBaseSubtable*)(subtable));
 		}
+		return tret;
 	}
 
 	CalcAnchor  IndoPak::getanchorCalcFunctions(QString functionName, Subtable* subtable) {
+		CalcAnchor tret;
 		if (functionName == "defaultmarkabovemark") {
 			return Defaultmarkabovemark(*this, *(MarkBaseSubtable*)(subtable));
 		}
@@ -588,6 +589,7 @@ namespace indopak {
 		else if (functionName == "waqfmarkabove") {
 			return Waqfmarkabove(*this, *(MarkBaseSubtable*)(subtable));
 		}
+		return tret;
 	}
 
 	Lookup* IndoPak::getLookup(QString lookupName) {

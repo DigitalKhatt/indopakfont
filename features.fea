@@ -493,6 +493,7 @@ lookup leftexpand {
 
     lookup forwawfea.add1 {
       sub @haslefttatweel add 1 0;
+      sub behshape.medi by behshape.medi.expa add 1 0;
     } forwawfea.add1;
 
     lookup forwawfea.add2 {
@@ -596,15 +597,21 @@ lookup rehwawcursive {
     pos /^waw/ <-50 0 -50 0>;
   } rehwawcursive.rec.l2;
 
+   lookup rehwawcursive.rec.l3 {    
+    pos /^hamza.isol/ <0 0 -100 0>;    
+  } rehwawcursive.rec.l3;
+
   lookup rehwawcursive.rec {
 
-    pos /^reh|^waw/'lookup rehwawcursive.l1 (@marks{0,3})' [behshape.init.beforeyeh /^behshape[.]init/]'lookup rehwawcursive.l1 [twodotsdown onedotdown hamzabelow]' ;
+    pos /^reh|^waw/'lookup rehwawcursive.l1 (@marks{0,3})' /^behshape[.]init/'lookup rehwawcursive.l1 [twodotsdown onedotdown hamzabelow]' ;
+
+    pos /^reh|^waw/'lookup rehwawcursive.l1 (@marks{0,3})' [/^behshape[.]init[.]beforeyeh/ /^lam[.]init[.]beforeyeh/ ] 'lookup rehwawcursive.l1 ;
 
     pos /^reh|^waw/'lookup rehwawcursive.rec.l1 (@marks{0,3})' /^alef.isol/' [kasra]' ;
 
     pos /^reh/'lookup rehwawcursive.rec.l2 [fatha]' [/^alef.isol/ kaf.init.beforelam ]';    
 
-    pos /^reh|^waw/'lookup rehwawcursive.rec.l2 (@marks{0,3})' [heh.isol /^sad/ hamza.isol]' ([onedotup twodotsup]?)' ([shadda]?)' [fatha damma fathatan dammatan] ' ;    
+    pos /^reh|^waw/'lookup rehwawcursive.rec.l2 (@marks{0,3})' [heh.isol /^sad/ hamza.isol]'lookup rehwawcursive.rec.l3 ([onedotup twodotsup]?)' ([shadda]?)' [fatha damma fathatan dammatan] ' ;    
       
     #pos /^reh|^waw/'<100 0 100 0> (@marks{0,3})' /[.]init/' ([twodotsdown onedotdown]|[shadda]? @lowmarks)' ;
 
@@ -804,16 +811,16 @@ lookup othercalt {
 
   sub behshape.init'lookup othercalt.l3 onedotdown kasra alef.fina hamzabelow;
 
-  lookup gsubmark.l1 {
-    sub fatha add -0.5 0;	
-  } gsubmark.l1;	
+  #lookup gsubmark.l1 {
+  #  sub fatha add -0.5 0;	
+  #} gsubmark.l1;	
 
   lookup gsubmark.l2 {
     sub lam.init.beforedal by lam.init;	
     sub dal.fina.afterlam by dal.fina;	
   } gsubmark.l2;	
 
-  sub hah.medi.afterlam.beforeyeh'  fatha'lookup gsubmark.l1; 
+  #sub hah.medi.afterlam.beforeyeh'  fatha'lookup gsubmark.l1; 
 
   sub lam.init.beforedal'lookup gsubmark.l2 fatha' dal.fina.afterlam'lookup gsubmark.l2 shadda' damma'; 
 
@@ -841,7 +848,7 @@ lookup adjustmkmk {
   pos [lam.init.beforeyeh]' [shadda]'<50 0 0 0 > [kasra]' [yehshape.fina.ii]' [sukun]' [maddahabove]' ;
   pos [dal.isol]' [onedotup]' [fatha]'<50 0 0 0> [alef.isol]' [maddahabove]' ;
   pos [behshape.init.beforeyeh]' [twodotsup]'<0 50 0 0> [kasra]' [yehshape.fina.ii]' [fatha]'<0 -70 0 0> ;
-  #pos [seen.fina]' [kasratan]'<0 -140 0 0> [smalllowmeem]' ;
+  pos [reh.fina.afterbehshape]' ([onedotup]?)' [kasra]'<0 -100 0 0> [ain.isol]';
   
 } adjustmkmk;
 
