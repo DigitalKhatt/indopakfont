@@ -849,7 +849,9 @@ lookup adjustmkmk {
   pos [dal.isol]' [onedotup]' [fatha]'<50 0 0 0> [alef.isol]' [maddahabove]' ;
   pos [behshape.init.beforeyeh]' [twodotsup]'<0 50 0 0> [kasra]' [yehshape.fina.ii]' [fatha]'<0 -70 0 0> ;
   pos [reh.fina.afterbehshape]' ([onedotup]?)' [kasra]'<0 -100 0 0> [ain.isol]';
-  
+  pos [alef.isol]' [fatha]'<0 -50 0 0> [lam.init]' [fatha]';
+  pos [hamza.isol]' [fatha]'<20 -20 0 0> [behshape.init]' [twodotsup]';
+
 } adjustmkmk;
 
 lookup substwaqf {
