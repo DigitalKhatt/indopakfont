@@ -481,7 +481,7 @@
                     ],
                     "behshape.init": [
                         37,
-                        -19
+                        0
                     ],
                     "behshape.init.beforebeh": [
                         -46,
@@ -496,7 +496,7 @@
                         -30
                     ],
                     "behshape.init.beforeyeh": [
-                        -59,
+                        -67,
                         0
                     ],
                     "behshape.isol": [
@@ -1736,8 +1736,8 @@
                         30
                     ],
                     "alef.isol": [
-                        -26,
-                        -73
+                        -9,
+                        -41
                     ],
                     "alefmaksura.isol": [
                         -27,
@@ -2849,7 +2849,7 @@
                     ],
                     "lam.init": [
                         58,
-                        113
+                        133
                     ],
                     "lam.init.allah": [
                         -11,
