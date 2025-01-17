@@ -155,11 +155,11 @@ lookup basmala {
     sub seen.medi by seen.medi.basmala add 2 0;
     sub meem.fina by meem.fina.basmala add 0 2;
     sub behshape.medi.beforeseen add  -0.5 2;
-    sub hah.init add 2 0;
+    sub hah.init by hah.init.basmala.ii add 0 0 ;
     sub meem.medi.afterhah  add -0.3 0;    
     sub hah.init.beforemeem by hah.init.basmala add 0 0 ;
     sub meem.medi.afterhah by meem.medi.basmala add 0 0 ;
-    sub noon.fina add 0 -0.3;
+    sub noon.fina by noon.fina.basmala.ii add 0 0;
   } basmala.l1;
 
   lookup basmala.l2 {
@@ -181,6 +181,8 @@ lookup basmala.kern {
     lookupflag IgnoreMarks;
 
     pos [meem.fina.basmala]'<-200 0 0 0> space' [alef.isol]'<0 0 -100 0>;
+    pos [hah.init.basmala]'<200 0 0 0>;
+    pos [hah.init.basmala.ii]'<200 0 0 0>;
 
 
 } basmala.kern ;

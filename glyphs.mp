@@ -4447,6 +4447,12 @@ brdmv ( (478.578,29.6803), (0,0), (7.18182,-53.4056) ) {curl1} .. tension 1.3214
 %%beginbody
 tr_ := identity shifted (0,-ypart (llcorner currentpicture) - noondepth );
 enddefchar;
+defchar(noon.fina.basmala.ii,-1,-1,-1,-1);
+%%backgroundimage:images/noon.fina.jpg,-261.135,-891.484,1,0,0,1
+%%beginbody
+noon.fina_(0,-0.3);
+tr_ := tr_ shifted (0,50 );
+enddefchar;
 defchar(noon.fina.afterbeh,-1,-1,-1,-1);
 %%backgroundimage:images/noon.fina.afterbeh.jpg,-92.1667,-859.167,1,0,0,1
 
@@ -8802,6 +8808,11 @@ defchar(behshape.medi.basmala,-1,-1,-1,-1);
 
 behshape.medi.expa_(lefttatweel,righttatweel);
 enddefchar;
+defchar(hah.init.basmala.ii,-1,-1,-1,-1);
+%%backgroundimage:images/hah.init.jpg,-1132,-1168,1,0,0,1
+%%beginbody
+hah.init_(2,0);
+enddefchar;
 defchar(hah.init.basmala,-1,-1,-1,-1);
 %%backgroundimage:images/basmala.3.jpg,-4077.72,-1005.71,1,0,0,1
 
@@ -8835,7 +8846,7 @@ defchar(meem.fina.basmala,-1,-1,-1,-1);
 %%beginbody
 
 meem.fina_(lefttatweel,righttatweel);
-
+tr_ := tr_ shifted (0,-50 );
 enddefchar;
 defchar(meem.medi.basmala,-1,-1,-1,-1);
 %%backgroundimage:images/basmala.3.jpg,-3667,-837,1,0,0,1
