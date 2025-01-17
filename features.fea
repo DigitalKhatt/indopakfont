@@ -201,6 +201,10 @@ lookup behshape {
     sub behshape.medi by behshape.medi.beforeseen;    
   } behshape.l2;
 
+     lookup behshape.l3 {
+       sub behshape.medi by behshape.medi.beforeseen;    
+  } behshape.l3;
+  
   sub [behshape.init behshape.medi]'lookup behshape.l1   [ /^seen.medi/ /^seen.fina/]; 
 
   sub  [behshape.init behshape.medi seen.init seen.medi sad.init sad.medi]'
@@ -211,7 +215,9 @@ lookup behshape {
 
   sub  [lam.init behshape.init]' [behshape.medi] [ /^seen.medi/ /^seen.fina/]; 
 
-
+ sub  [hah.init hah.medi hah.medi.ii hah.medi.lam_hah hah.medi.aftermeem hah.medi.afterbeh meem.init meem.medi fehshape.init fehshape.medi tah.init tah.medi ain.init ain.medi kaf.init kaf.medi lam.init lam.medi heh.init heh.medi]' 
+    [behshape.medi]' lookup behshape.l3 [behshape.medi] [ /^alef.fina/ /^hah.fina/ /^hah.medi/ /^dal.fina/ /^sad.fina/ /^sad.medi/ /^tah.fina/ /^tah.medi/ /^ain.fina/ /^ain.medi/ /^feh.fina/ /^fehshape.medi/ /^qaf.fina/ /^kaf.fina/ /^lam.fina/ /^lam.medi/ /^meem.medi/ /^heh.fina/ /^heh.medi/ /^kaf.medi/ /^waw.fina/ /^behshape.medi.beforeseen/];
+	
 } behshape;
 
 lookup ainfinjani {
