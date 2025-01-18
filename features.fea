@@ -247,6 +247,7 @@ lookup kaflamalef {
     sub lam.fina by lam.fina.afterkaf;
     sub lam.medi.laf by lam.medi.laf.afterkaf;
     sub lam.medi by lam.medi.afterkaf;
+    sub lam.medi.beforeheh by lam.medi.beforeheh.afterkaf;
   } kaflamalef.l1;
 
   sub  [kaf.init kaf.medi]'lookup  kaflamalef.l1 [lam.medi.laf lam.fina alef.fina lam.medi lam.medi.beforeheh]'lookup kaflamalef.l1;
