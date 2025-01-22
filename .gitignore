@@ -1,9 +1,2 @@
 # output files
 output
-CMakeLists.txt
-CMakePresets.json
-CMakeUserPresets.json
-build
-shared.cpp
-shared.h
-vcpkg.json
