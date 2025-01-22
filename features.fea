@@ -658,7 +658,8 @@ lookup isolkern {
 
   pos [alef.isol /^alef.fina/]'lookup isolkern.o2 [/^lam.init/ /^alef.isol/]'lookup isolkern.o2;
 
-  
+  pos /^reh|^waw/'<-100 0 -100 0>  space /^endofaya/;
+
   pos /^reh|^waw/';
 
   pos /^endofaya/'lookup isolkern.o1 rubelhizb;
@@ -695,6 +696,8 @@ lookup variouskern {
     pos [alef.fina] <100 0 100 0>;	
   } alefkern.l2; 
 
+  # Used when decreasing space to 100  
+  pos [alef.isol]'<0 0 20 0> [smalllownoon]' ;
   pos [alef.isol]'lookup alefkern.l2 [fatha]' [lam.init.beforedal]' [shadda]';
   pos [alef.isol]'lookup alefkern.l2 [maddawaajib]' [behshape.init]' [onedotdown]' [shadda]';
   
@@ -726,6 +729,12 @@ lookup variouskern {
   pos [alef.isol]'<100 0 100 0> [fatha damma]' [kaf.init]';
 
   pos [alef.isol]'<100 0 100 0> [smallalef]' [maddawaajib]' [lam.init]' [sukun]';
+
+  #  Used when decreasing space to 100  
+  
+  pos [alef.fina.laf]'<80 0 80 0> [maddahabove]' space' [alef.isol];
+  pos [alef.fina alef.isol]'<50 0 50 0> [maddahabove smallhighroundedzero fathatan]' space' [alef.isol] [fatha];
+  
 
 } variouskern;
 
@@ -850,6 +859,8 @@ lookup adjustmkmk {
   pos [reh.fina.afterbehshape]' ([onedotup]?)' [kasra]'<0 -100 0 0> [ain.isol]';
   pos [alef.isol]' [fatha]'<0 -50 0 0> [lam.init]' [fatha]';
   pos [hamza.isol]' [fatha]'<20 -20 0 0> [behshape.init]' [twodotsup]';
+  # Used when decreasing space to 100  
+  pos [kasratan]'<40 -20 0 0> [smalllowmeem]' space' [/^behshape.init/]' [onedotdown]'<-30 0 0 0> [kasra]'<-30 0 0 0>;
 
 } adjustmkmk;
 

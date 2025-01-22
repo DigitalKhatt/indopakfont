@@ -40,7 +40,7 @@
                         3
                     ],
                     "behshape.init.beforehah": [
-                        90,
+                        70,
                         44
                     ],
                     "behshape.init.beforenoon": [
@@ -806,7 +806,7 @@
                         -83
                     ],
                     "alef.isol": [
-                        16,
+                        8,
                         55
                     ],
                     "alef.isol.ii": [
@@ -1168,7 +1168,7 @@
             "maddahabove": {
                 "baseparameters": {
                     "alef.fina": [
-                        -43,
+                        -16,
                         -67
                     ],
                     "alef.fina.afterkaf": [
@@ -1900,11 +1900,11 @@
                         -48
                     ],
                     "heh.fina": [
-                        -38,
+                        -25,
                         -28
                     ],
                     "heh.fina.afterlam": [
-                        -56,
+                        -15,
                         -49
                     ],
                     "heh.fina.allah": [
@@ -2372,6 +2372,16 @@
                     "onedotup": [
                         -122,
                         -244
+                    ]
+                }
+            }
+        },
+        "sukunmaddahabove": {
+            "maddahabove": {
+                "baseparameters": {
+                    "inverteddamma": [
+                        0,
+                        69
                     ]
                 }
             }
