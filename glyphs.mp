@@ -158,7 +158,7 @@ defchar(space,32,-1,-1,-1);
 %%beginbody
 
 
-charwd := 100 + lefttatweel  *nuqta ;
+charwd := 200 + lefttatweel  *nuqta ;
 enddefchar;
 beginchar(space.ii,-1,-1,-1,-1);
 %%beginbody
