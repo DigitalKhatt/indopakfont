@@ -43,7 +43,7 @@ namespace indopak {
   class Waqffinabasemark : public AnchorCalc {
   public:
     Waqffinabasemark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-    QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+    QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
       GlyphVis& curr = _y.glyphs[glyphName];
 
@@ -60,7 +60,7 @@ namespace indopak {
   class Waqffinamark : public AnchorCalc {
   public:
     Waqffinamark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-    QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+    QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
       GlyphVis& curr = _y.glyphs[glyphName];
 
@@ -78,7 +78,7 @@ namespace indopak {
   class Waqfbasebelow : public AnchorCalc {
   public:
     Waqfbasebelow(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-    QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+    QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
       GlyphVis& curr = _y.glyphs[glyphName];
 
@@ -95,7 +95,7 @@ namespace indopak {
   class Waqfmarkabove : public AnchorCalc {
   public:
     Waqfmarkabove(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-    QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+    QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
       GlyphVis& curr = _y.glyphs[glyphName];
 

@@ -28,20 +28,13 @@ namespace indopak {
     class Defaulbaseanchorfortop : public AnchorCalc {
     public:
         Defaulbaseanchorfortop(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
             GlyphVis* curr = &_y.glyphs[glyphName];
 
 
 
-            if (lefttatweel != 0.0 || righttatweel != 0.0) {
-                GlyphParameters parameters{};
-
-                parameters.lefttatweel = lefttatweel;
-                parameters.righttatweel = righttatweel;
-
-                curr = curr->getAlternate(parameters);
-            }
+            curr = curr->getAlternate(parameters);
 
 
 
@@ -52,7 +45,7 @@ namespace indopak {
             else {
                 GlyphVis* originalglyph;
 
-                QPoint adjustoriginal = getAdjustment(_y, _subtable, curr, className, adjust, lefttatweel, righttatweel, &originalglyph);
+                QPoint adjustoriginal = getAdjustment(_y, _subtable, curr, className, adjust, parameters, &originalglyph);
 
                 QPoint anchor;
 
@@ -101,23 +94,16 @@ namespace indopak {
     class Defaulbaseanchorforlow : public AnchorCalc {
     public:
         Defaulbaseanchorforlow(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
 
             GlyphVis* curr = &_y.glyphs[glyphName];
 
-            if (lefttatweel != 0.0 || righttatweel != 0.0) {
-                GlyphParameters parameters{};
-
-                parameters.lefttatweel = lefttatweel;
-                parameters.righttatweel = righttatweel;
-
-                curr = curr->getAlternate(parameters);
-            }
+            curr = curr->getAlternate(parameters);
 
             GlyphVis* originalglyph;
 
-            QPoint adjustoriginal = getAdjustment(_y, _subtable, curr, className, adjust, lefttatweel, righttatweel, &originalglyph);
+            QPoint adjustoriginal = getAdjustment(_y, _subtable, curr, className, adjust, parameters, &originalglyph);
 
             if (curr->originalglyph.contains("isol.expa")) {
                 originalglyph = curr;
@@ -140,21 +126,15 @@ namespace indopak {
     class Defaultopmarkanchor : public AnchorCalc {
     public:
         Defaultopmarkanchor(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
             GlyphVis* curr = &_y.glyphs[glyphName];
 
             auto ori_width = curr->width;
             auto ori_height = curr->height;
 
-            if (lefttatweel != 0.0 || righttatweel != 0.0) {
-                GlyphParameters parameters{};
+            curr = curr->getAlternate(parameters);
 
-                parameters.lefttatweel = lefttatweel;
-                parameters.righttatweel = righttatweel;
-
-                curr = curr->getAlternate(parameters);
-            }
             int width = curr->width * 0.5;
             int height = 1;
 
@@ -181,18 +161,11 @@ namespace indopak {
     class Defaullowmarkanchor : public AnchorCalc {
     public:
         Defaullowmarkanchor(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
             GlyphVis* glyph = &_y.glyphs[glyphName];
 
-            if (lefttatweel != 0.0 || righttatweel != 0.0) {
-                GlyphParameters parameters{};
-
-                parameters.lefttatweel = lefttatweel;
-                parameters.righttatweel = righttatweel;
-
-                glyph = glyph->getAlternate(parameters);
-            }
+            glyph = glyph->getAlternate(parameters);
 
             int width = glyph->width * 0.5;
             int height = glyph->height;
@@ -217,7 +190,7 @@ namespace indopak {
     class Defaultmarkabovemark : public AnchorCalc {
     public:
         Defaultmarkabovemark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
             GlyphVis& curr = _y.glyphs[glyphName];
 
@@ -239,7 +212,7 @@ namespace indopak {
     class Defaultmarkbelowmark : public AnchorCalc {
     public:
         Defaultmarkbelowmark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
             GlyphVis& curr = _y.glyphs[glyphName];
 
@@ -262,21 +235,14 @@ namespace indopak {
     class Defaulbaseanchorforsmallalef : public AnchorCalc {
     public:
         Defaulbaseanchorforsmallalef(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
 
 
             GlyphVis* curr = &_y.glyphs[glyphName];
 
 
-            if (lefttatweel != 0.0 || righttatweel != 0.0) {
-                GlyphParameters parameters{};
-
-                parameters.lefttatweel = lefttatweel;
-                parameters.righttatweel = righttatweel;
-
-                curr = curr->getAlternate(parameters);
-            }
+            curr = curr->getAlternate(parameters);
 
             GlyphVis* originalglyph = curr;
             QPoint adjustoriginal;
@@ -323,18 +289,11 @@ namespace indopak {
     class Defaulbaseanchorfortopdots : public AnchorCalc {
     public:
         Defaulbaseanchorfortopdots(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
             GlyphVis* curr = &_y.glyphs[glyphName];
 
-            if (lefttatweel != 0.0 || righttatweel != 0.0) {
-                GlyphParameters parameters{};
-
-                parameters.lefttatweel = lefttatweel;
-                parameters.righttatweel = righttatweel;
-
-                curr = curr->getAlternate(parameters);
-            }
+            curr = curr->getAlternate(parameters);
 
             if (curr->conatinsAnchor(className, GlyphVis::AnchorType::MarkAnchor)) {
                 QPoint anchor = curr->getAnchor(className, GlyphVis::AnchorType::MarkAnchor) + adjust;
@@ -343,7 +302,7 @@ namespace indopak {
 
             GlyphVis* originalglyph;
 
-            QPoint adjustoriginal = getAdjustment(_y, _subtable, curr, className, adjust, lefttatweel, righttatweel, &originalglyph);
+            QPoint adjustoriginal = getAdjustment(_y, _subtable, curr, className, adjust, parameters, &originalglyph);
 
             int width = (int)(originalglyph->width * 0.5);
 
@@ -374,18 +333,11 @@ namespace indopak {
     class Defaulbaseanchorforlowdots : public AnchorCalc {
     public:
         Defaulbaseanchorforlowdots(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
             GlyphVis* curr = &_y.glyphs[glyphName];
 
-            if (lefttatweel != 0.0 || righttatweel != 0.0) {
-                GlyphParameters parameters{};
-
-                parameters.lefttatweel = lefttatweel;
-                parameters.righttatweel = righttatweel;
-
-                curr = curr->getAlternate(parameters);
-            }
+            curr = curr->getAlternate(parameters);
 
 
             if (curr->conatinsAnchor(className, GlyphVis::AnchorType::MarkAnchor)) {
@@ -397,7 +349,7 @@ namespace indopak {
                 return anchor;
             }
             else {
-                QPoint adjustoriginal = getAdjustment(_y, _subtable, curr, className, adjust, lefttatweel, righttatweel, &curr);
+                QPoint adjustoriginal = getAdjustment(_y, _subtable, curr, className, adjust, parameters, &curr);
 
                 QPoint anchor = QPoint{ (int)(curr->width * 0.5),(int)(curr->depth - 50) } + adjustoriginal + adjust;
 
@@ -413,20 +365,13 @@ namespace indopak {
     class Joinedsmalllettersbaseanchor : public AnchorCalc {
     public:
         Joinedsmalllettersbaseanchor(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-        QPoint operator()(QString glyphName, QString className, QPoint adjust, double lefttatweel = 0.0, double righttatweel = 0.0) override {
+        QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
 
 
             GlyphVis* curr = &_y.glyphs[glyphName];
 
-            if (lefttatweel != 0.0 || righttatweel != 0.0) {
-                GlyphParameters parameters{};
-
-                parameters.lefttatweel = lefttatweel;
-                parameters.righttatweel = righttatweel;
-
-                curr = curr->getAlternate(parameters);
-            }
+            curr = curr->getAlternate(parameters);
 
             //QPoint adjustoriginal = getAdjustment(_y, _subtable, originalglyph, className, adjust, lefttatweel, righttatweel, &originalglyph);
 

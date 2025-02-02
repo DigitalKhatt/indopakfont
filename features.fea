@@ -46,12 +46,16 @@ lookup miscellaneoussubst {
     sub  cgj meemiqlab by meemiqlab; 
     sub  hamzaabove cgj by hamzaabove;  
     sub  maddahabove cgj by maddahabove;      
-    sub  meemiqlab cgj by meemiqlab;     
+    sub  meemiqlab cgj by meemiqlab;   
+    sub hamzaabove.joined cgj by hamzaabove.joined; 
+    sub hamzabelow cgj by hamzabelow; 
+    sub hamzabelow.joined cgj by hamzabelow.joined; 
     sub  tatweel smallalef by smallalef.joined; 
     sub  tatweel hamzabelow by hamzabelow.joined; 
     sub  tatweel hamzaabove by hamzaabove.joined;      
     sub  tatweel smallhighyeh by smallhighyeh;      
-    sub  tatweel smallhighnoon by smallhighnoon;         
+    sub  tatweel smallhighnoon by smallhighnoon;  
+           
   } miscellaneoussubst.l1;
 
    lookup miscellaneoussubst.l2 {
@@ -62,7 +66,7 @@ lookup miscellaneoussubst {
 
   sub [smallalef] cgj'lookup miscellaneoussubst.l1 hamzaabove';  
 
-  sub [hamzaabove maddahabove meemiqlab]'lookup miscellaneoussubst.l1 cgj';
+  sub [hamzaabove maddahabove meemiqlab hamzaabove.joined hamzabelow hamzabelow.joined ]'lookup miscellaneoussubst.l1 cgj';
 
   sub tatweel'lookup miscellaneoussubst.l1 [smallalef hamzaabove smallhighyeh smallhighnoon hamzabelow];
 

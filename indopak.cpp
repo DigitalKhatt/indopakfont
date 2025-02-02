@@ -896,24 +896,17 @@ namespace indopak {
 		newsubtable->name = "hamzabelow.joined";
 		newsubtable->base = { ".init|.medi" };
 		newsubtable->classes["hamzabelow"].mark = { "hamzabelow.joined" };
-		newsubtable->classes["hamzabelow"].basefunction = [this](QString glyphName, QString className, QPoint adjust, double lefttatweel, double righttatweel) -> QPoint {
+		newsubtable->classes["hamzabelow"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis* curr = &glyphs[glyphName];
 
-			if (lefttatweel != 0.0 || righttatweel != 0.0) {
-				GlyphParameters parameters{};
-
-				parameters.lefttatweel = lefttatweel;
-				parameters.righttatweel = righttatweel;
-
-				curr = curr->getAlternate(parameters);
-			}
+			curr = curr->getAlternate(parameters);
 
 			int width = 100 + adjust.x();
 			int height = curr->depth + adjust.y();
 
 			return QPoint(width, height);
 			};
-		newsubtable->classes["hamzabelow"].markfunction = [this](QString glyphName, QString className, QPoint adjust, double lefttatweel, double righttatweel) -> QPoint {
+		newsubtable->classes["hamzabelow"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis* curr = &glyphs[glyphName];
 			return QPoint(adjust.x(), adjust.y() + 100 + curr->height);
 			};
@@ -1029,7 +1022,7 @@ namespace indopak {
 		newsubtable->name = "takhallus";
 		newsubtable->base = { "bases" };
 		newsubtable->classes["takhallus"].mark = { "takhallus" };
-		newsubtable->classes["takhallus"].basefunction = [this](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		newsubtable->classes["takhallus"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 
 			auto disp = 1000;
@@ -1039,7 +1032,7 @@ namespace indopak {
 
 			return QPoint(width, height);
 			};
-		newsubtable->classes["takhallus"].markfunction = [this](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		newsubtable->classes["takhallus"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 			return QPoint(adjust.x() + curr.width / 2, adjust.y());
 			};
@@ -1051,7 +1044,7 @@ namespace indopak {
 		newsubtable->name = "waqfsubtable";
 		newsubtable->base = { "aya" };
 		newsubtable->classes["waqfmarksaya"].mark = { "waqfmarksaya" };
-		newsubtable->classes["waqfmarksaya"].basefunction = [this](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		newsubtable->classes["waqfmarksaya"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 
 			int width = curr.width / 2 + adjust.x();
@@ -1059,7 +1052,7 @@ namespace indopak {
 
 			return QPoint(width, height);
 			};
-		newsubtable->classes["waqfmarksaya"].markfunction = [this](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		newsubtable->classes["waqfmarksaya"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 			return QPoint(adjust.x() + curr.width / 2, adjust.y());
 			};
@@ -1072,7 +1065,7 @@ namespace indopak {
 		newsubtable->name = "waqfsubtable";
 		newsubtable->base = { "waqfbase.isol","disputedeoa" };
 		newsubtable->classes["waqfmarksfina"].mark = { "waqfmarksfina" };
-		newsubtable->classes["waqfmarksfina"].basefunction = [this](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		newsubtable->classes["waqfmarksfina"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 
 			auto disp = glyphName == "waqfbase.isol" ? 330 : 30;
@@ -1082,7 +1075,7 @@ namespace indopak {
 
 			return QPoint(width, height);
 			};
-		newsubtable->classes["waqfmarksfina"].markfunction = [this](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		newsubtable->classes["waqfmarksfina"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 			int width = adjust.x() + curr.width / 2;
 			int height = adjust.y();
@@ -1183,7 +1176,7 @@ namespace indopak {
 				int waqfKern = 100 + markGlyph->width + (maxWidth - markGlyph->width) / 2;
 				int waqfHeight = seq.size() == 1 ? 200 : seq.size() == 2 ? 300 : seq.size() == 3 ? 400 : 500;
 
-				auto basefunction = [this, waqfKern, waqfHeight](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+				auto basefunction = [this, waqfKern, waqfHeight](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 					GlyphVis& curr = glyphs[glyphName];
 
 					int height = waqfHeight;
@@ -1196,7 +1189,7 @@ namespace indopak {
 					return QPoint(width, height);
 					};
 
-				auto markfunction = [this](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+				auto markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 					GlyphVis& curr = glyphs[glyphName];
 
 					int height = 0;
@@ -1275,7 +1268,7 @@ namespace indopak {
 		sublookup->type = Lookup::mark2mark;
 		m_layout->addLookup(sublookup);
 
-		auto basefunction = [this](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		auto basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 
 			int height = 0; // (int)curr.height + spacebasetotopmark;
@@ -1288,7 +1281,7 @@ namespace indopak {
 			return QPoint(width, height);
 			};
 
-		auto markfunction = [this](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		auto markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 
 			int height = (int)curr.height + 50;
@@ -1451,7 +1444,7 @@ namespace indopak {
 		topsubtable->name = "defaultmarkdotmarkstop";
 		topsubtable->base = { "topdotmarks" };
 
-		auto basetopfunction = [this, topsubtable](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		auto basetopfunction = [this, topsubtable](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 
 
@@ -1492,7 +1485,7 @@ namespace indopak {
 		bottomsubtable->name = "defaultmarkdotmarksbottom";
 		bottomsubtable->base = { "downdotmarks" };
 
-		auto basedownfunction = [this, bottomsubtable](QString glyphName, QString className, QPoint adjust, double, double) -> QPoint {
+		auto basedownfunction = [this, bottomsubtable](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
 			GlyphVis& curr = glyphs[glyphName];
 
 			int depth = -(int)curr.depth + 50;
