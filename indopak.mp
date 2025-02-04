@@ -58,5 +58,4 @@ secondarydef p leftjoinii q =
   z.lft.top  .. controls z_l3  and z_l4 .. 
  q
 enddef;
-defAxis("leftTatweel","LTAT",-20,0,20,"params0");
-defAxis("rightTatweel","RTAT",-20,0,20,"params1");
+defAxis("scaleX","SCLX",50,100,200,"params100");
