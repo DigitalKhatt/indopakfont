@@ -127,9 +127,11 @@ namespace indopak {
 			}
 			QString data = QString("beginchar(%1%2,%4,-1,1,-1);\n%%beginbody\ngenAyaNumber(%1, %2,380);%3;endchar;").arg(ayaName).arg(ayaNumber).arg(setcolored).arg(codechar);
 			m_layout->font->executeMetaPost(data);
+			addedGlyphs.insert(QString("%1%2").arg(ayaName).arg(ayaNumber), data);
 			if (colored) {
 				data = QString("beginchar(%1.colored%2,-1,-1,5,-1);\n%%beginbody\ngenAyaNumber(%1.colored, %2,380);endchar;").arg(ayaName).arg(ayaNumber);
 				m_layout->font->executeMetaPost(data);
+				addedGlyphs.insert(QString("%1.colored%2").arg(ayaName).arg(ayaNumber), data);
 			}
 		}
 	}
