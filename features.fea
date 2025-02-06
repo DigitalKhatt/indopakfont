@@ -247,7 +247,7 @@ lookup kaflamalef {
     sub lam.medi.beforeheh by lam.medi.beforeheh.afterkaf;
   } kaflamalef.l1;
 
-  sub  [kaf.init kaf.medi]'lookup  kaflamalef.l1 [lam.medi.laf lam.fina alef.fina lam.medi lam.medi.beforeheh]'lookup kaflamalef.l1;
+  sub  [kaf.init kaf.medi]'lookup  kaflamalef.l1 [lam.medi.laf lam.fina alef.fina lam.medi lam.medi.beforeheh lam.medi.beforeyeh]'lookup kaflamalef.l1;
   
 
 } kaflamalef;
@@ -670,11 +670,10 @@ lookup isolkern {
 
   pos [/[.]isol/ /[.]fina/ smallwaw smallyeh rubelhizb]'lookup isolkern.o1  [/[.]init/ /[.]isol/ smallwaw smallyeh placeofsajdah];	
 
-  
   pos sixindic' disputedeoa'<200 200 0 0>;
 
   pos disputedeoa'<0 0 100 0>;
-
+ 
 } isolkern;
 
 lookup variouskern {
@@ -711,8 +710,14 @@ lookup variouskern {
   pos [alef.isol]'lookup alefkern.l1 [fatha sukun]' [behshape.init]' [onedotdown twodotsdown]' [shadda]' [fatha fathatan damma]';  
   pos [alef.isol]'lookup alefkern.l2 [kasra]' [behshape.init.beforeyeh]' [onedotup]' [shadda]' [kasra]' ;
   
+  pos [reh.isol]' [kasra]' [kaf.init.beforemeem]' <0 0 -200 0>; #added by zeeshan
+  pos [alef.fina.lamalef]' [maddawaajib]' [hamza.isol]' <0 0 -100 0>; #added by zeeshan
+  pos [reh.isol]' [fatha]' [hah.init.beforemeem]'  <0 0 -100 0>; #added by zeeshan
+   pos [reh.fina.afterseen]' [kasra]' [kaf.init]'  <0 0 -200 0>; #added by zeeshan
+  
   
   pos [alef.fina]'lookup alefkern.l2 [kasratan]' [smalllowmeem]';
+
 
   pos [disputedeoa waqfbase.isol]'lookup variouskern.l4 [sakta waqfa]';  
   pos [disputedeoa waqfbase.isol]'lookup variouskern.l4 @waqfmarks' [sakta waqfa]'; 
@@ -865,7 +870,16 @@ lookup adjustmkmk {
   pos [hamza.isol]' [fatha]'<20 -20 0 0> [behshape.init]' [twodotsup]';
   # Used when decreasing space to 100  
   pos [kasratan]'<40 -20 0 0> [smalllowmeem]' space' [/^behshape.init/]' [onedotdown]'<-30 0 0 0> [kasra]'<-30 0 0 0>;
+  pos [kasra]' [yehshape.fina.ii]' [shadda]' [kasra subalef kasratan]' <-100 0 0 0>; #added by zeeshan
+    pos [lam.medi]' [smallalef]' <-100 -100 0 0> [maddawaajib]' [waw.fina]' [hamzaabove]' [damma dammatan]'; #added by zeeshan
+  pos [lam.init]' [smallalef]' <-150 -350 0 0> [maddawaajib]'; #added by zeeshan
+  pos [lam.medi]' [smallalef]' <-150 -250 0 0> [maddawaajib]'; #added by zeeshan
 
+  pos [lam.init]' [smallalef]' <-100 -200 0 0>; #added by zeeshan
+  pos [lam.init.beforeyeh]' [smallalef]' <-150 -300 0 0>; #added by zeeshan
+  pos [lam.medi.beforeyeh]' [smallalef]' <-100 -300 0 0>; #added by zeeshan
+  pos [lam.medi]' [smallalef]' <-100 -200 0 0>; #added by zeeshan
+  
 } adjustmkmk;
 
 lookup substwaqf {
@@ -875,7 +889,7 @@ lookup substwaqf {
   lookupflag UseMarkFilteringSet [@waqfmarks];	
 
   lookup substwaqf.l1 {
-    sub takhallus				              by waqfbase.isol takhallus;
+    #sub takhallus				              by waqfbase.isol takhallus;
     sub waqf.lam				              by waqfbase.isol waqf.lam;
     sub waqf.jeem				              by waqfbase.isol waqf.jeem;
     sub waqf.sad				              by waqfbase.isol waqf.sad;

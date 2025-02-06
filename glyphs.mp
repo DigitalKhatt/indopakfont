@@ -3837,7 +3837,7 @@ fill
 
 %%endpaths
 %%beginbody
-
+tr_ := tr_ shifted (0,-60 );
 endchar;
 beginchar(meem.isol.ii,-1,-1,-1,-1);
 %%backgroundimage:images/meem.isol.ii.jpg,-284.865,-977.87,1,0,0,1
