@@ -714,8 +714,14 @@ lookup variouskern {
   pos [alef.fina.lamalef]' [maddawaajib]' [hamza.isol]' <0 0 -100 0>; #added by zeeshan
   pos [reh.isol]' [fatha]' [hah.init.beforemeem]'  <0 0 -100 0>; #added by zeeshan
    pos [reh.fina.afterseen]' [kasra]' [kaf.init]'  <0 0 -200 0>; #added by zeeshan
-  
-  
+   
+   pos [reh.fina]' [damma]' [kaf.init.beforemeem]' <0 0 -150 0>; #added by zeeshan
+  pos [reh.fina]' [sukun]' [hah.init.beforemeem]' <0 0 -100 0>; #added by zeeshan
+  pos [reh.fina]' [fatha]' [hah.init]' <0 0 -150 0>; #added by zeeshan
+  pos [reh.fina]' [sukun]' [ain.init]' <0 0 -100 0>; #added by zeeshan 
+  pos [reh.fina]' [kasra]' [sad.isol]' <0 0 -100 0>; #added by zeeshan 
+  pos [reh.fina]' [fatha]' [kaf.init]' <0 0 -100 0>; #added by zeeshan 
+  pos [reh.fina]' [fatha]' [kaf.init]' <0 0 -100 0>; #added by zeeshan 
   pos [alef.fina]'lookup alefkern.l2 [kasratan]' [smalllowmeem]';
 
 
@@ -879,6 +885,9 @@ lookup adjustmkmk {
   pos [lam.init.beforeyeh]' [smallalef]' <-150 -300 0 0>; #added by zeeshan
   pos [lam.medi.beforeyeh]' [smallalef]' <-100 -300 0 0>; #added by zeeshan
   pos [lam.medi]' [smallalef]' <-100 -200 0 0>; #added by zeeshan
+  pos [waw.isol]' [fatha]' [behshape.init]' [twodotsdown]' <0 -200 0 0> [/^damma/ /^fatha/]' [heh.medi]'; #added by zeeshan
+    pos [waw.isol]' [shadda]' [fatha]' [behshape.init]' [twodotsdown]' <0 -200 0 0> [/^damma/ /^fatha/]' [heh.medi]'; #added by zeeshan
+  pos [waw.isol]' [kasra]' [behshape.init]' [twodotsdown]' <0 -200 0 0> [sukun]' [lam.medi.beforeheh]'; #added by zeeshan
   
 } adjustmkmk;
 
