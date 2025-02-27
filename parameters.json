@@ -11,6 +11,18 @@
             }
         }
     },
+    "adjustmkmk_auto5": {
+        "subtable1": {
+            "parameters": {
+                "hamzabelow": [
+                    28,
+                    14,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
     "caltmkmk.l2": {
         "subtable1": {
             "fatha": {
