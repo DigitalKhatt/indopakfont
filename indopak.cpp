@@ -163,6 +163,7 @@ namespace indopak {
 			"maddahabove",
 			"fathatan",
 			"kasratan",
+			"kasratan.ii",
 			"smallalef",
 			"smallalef.joined",
 			"meemiqlab",
@@ -243,6 +244,7 @@ namespace indopak {
 			"kasratanidgham",
 			"kasra",
 			"kasratan",
+			"kasratan.ii",
 			"hamzabelow",
 			"roundedfilledlow",
 			"smalllowmeem",
@@ -253,7 +255,8 @@ namespace indopak {
 		classes["kasras"] = {
 			"kasratanidgham",
 			"kasra",
-			"kasratan"
+			"kasratan",
+			"kasratan.ii"
 		};
 
 		classes["waqfmarks"] = {
@@ -1423,7 +1426,7 @@ namespace indopak {
 		lookup->subtables.append(subtable);
 
 		subtable->name = "defaultmkmksmalllowmeem";
-		subtable->base = { "kasratan" };
+		subtable->base = { "kasratan","kasratan.ii"};
 
 		subtable->classes["smalllowmeem"].mark = { "smalllowmeem" };
 		subtable->classes["smalllowmeem"].basefunction = Defaultmarkbelowmark(*this, *subtable);

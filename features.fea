@@ -826,6 +826,7 @@ lookup othercalt {
 
   lookup othercalt.l4 {
     sub hamzaabove by hamzabelow;
+    sub kasratan by kasratan.ii;
   } othercalt.l4;
 
   sub behshape.init'lookup othercalt.l1 twodotsdown /^reh.fina/;
@@ -833,6 +834,10 @@ lookup othercalt {
   #sub [alef.isol alef.fina]'lookup othercalt.l2 hamzaabove'lookup othercalt.l1 fatha /^kaf.init/;
 
   sub behshape.init'lookup othercalt.l3 onedotdown kasra alef.fina hamzabelow;
+
+  sub [hah.fina hah.isol]' [onedotdown]' (shadda?)' [kasratan]'lookup othercalt.l4; 
+
+  sub [ain.fina ain.isol]' (onedotup?)' [kasratan]'lookup othercalt.l4; 
 
   #lookup gsubmark.l1 {
   #  sub fatha add -0.5 0;	
@@ -847,7 +852,7 @@ lookup othercalt {
 
   sub lam.init.beforedal'lookup gsubmark.l2 fatha' dal.fina.afterlam'lookup gsubmark.l2 shadda' damma'; 
 
-  sub [/^behshape.medi/ /^behshape.init/  /yehshape|alefmaksura/ /waw/] hamzaabove'lookup othercalt.l4 [kasra kasratan kasratanidgham];
+  sub [/^behshape.medi/ /^behshape.init/  /waw/] hamzaabove'lookup othercalt.l4 [kasra kasratan kasratanidgham];
 
   lookup gsubmark.l3 {
     sub alef.isol add -1.2 0;	
@@ -855,6 +860,8 @@ lookup othercalt {
   } gsubmark.l3;	
 
   sub [alef.isol alef.fina]'lookup gsubmark.l3 [hamzaabove]' [fatha]' [kaf.init.beforemeem]';
+
+  
 
 } othercalt;
 
@@ -888,6 +895,29 @@ lookup adjustmkmk {
   pos [waw.isol]' [fatha]' [behshape.init]' [twodotsdown]' <0 -200 0 0> [/^damma/ /^fatha/]' [heh.medi]'; #added by zeeshan
     pos [waw.isol]' [shadda]' [fatha]' [behshape.init]' [twodotsdown]' <0 -200 0 0> [/^damma/ /^fatha/]' [heh.medi]'; #added by zeeshan
   pos [waw.isol]' [kasra]' [behshape.init]' [twodotsdown]' <0 -200 0 0> [sukun]' [lam.medi.beforeheh]'; #added by zeeshan
+
+  lookup adjustmkmk.l1 {					
+    pos base  [/yehshape/ /alefmaksura/] 
+      <anchor function defaulbaseanchorfortop> markClass [kasratan]  <anchor function defaultopmarkanchor> @kasratan
+      <anchor function defaulbaseanchorfortop> markClass [hamzaabove] <anchor function defaultopmarkanchor> @hamzaabove;    
+  } adjustmkmk.l1;
+
+  lookup adjustmkmk.l2 {					
+    pos base  [/yehshape/ /alefmaksura/] 
+      <anchor function defaulbaseanchorfortop> markClass [kasra]  <anchor function defaultopmarkanchor> @kasratan
+      <anchor function defaulbaseanchorfortop> markClass [hamzaabove] <anchor function defaultopmarkanchor> @hamzaabove;    
+  } adjustmkmk.l2;
+  
+  pos  [kasra] [/yehshape/ /alefmaksura/]' [hamzaabove]'lookup adjustmkmk.l1 [kasratan]'lookup adjustmkmk.l1;
+  pos  [kasra] [/yehshape/ /alefmaksura/]' [hamzaabove]'lookup adjustmkmk.l2 [kasra]'lookup adjustmkmk.l2;
+
+  pos [reh.isol]' [kasra]' [behshape.init]' [hamzabelow]' [kasra]'<0 -50 0 0 >;
+
+  lookup adjustmkmk.l3 {					
+    pos mark  [onedotdown] <anchor function defaultbaseanchorforlow> markClass [kasratan] <anchor function defaullowmarkanchor> @kasratan;  
+  } adjustmkmk.l3;
+
+  pos [behshape.fina behshape.isol]' [onedotdown]' [kasratan]'lookup adjustmkmk.l3;
   
 } adjustmkmk;
 
@@ -1000,11 +1030,11 @@ lookup caltmkmk {
     pos base  [/^hah[.]fina|^hah[.]isol/] 
       <anchor function defaultbaseanchorforlow> markClass onedotdown  <anchor function defaullowmarkanchor> @onedotdown
       <anchor function defaultbaseanchorforlow> markClass kasra <anchor function defaullowmarkanchor> @kasra
-      <anchor function defaultbaseanchorforlow> markClass kasratan <anchor function defaullowmarkanchor> @kasratan
+      <anchor function defaultbaseanchorforlow> markClass [kasratan kasratan.ii] <anchor function defaullowmarkanchor> @kasratan
       <anchor function defaultbaseanchorforlow> markClass kasratanidgham <anchor function defaullowmarkanchor> @kasratanidgham;
   } caltmkmk.l1;
 
-  pos [/^hah[.]fina|^hah[.]isol/]' [onedotdown]'lookup caltmkmk.l1 (shadda?)' [kasra kasratan kasratanidgham]'lookup caltmkmk.l1;    
+  pos [/^hah[.]fina|^hah[.]isol/]' [onedotdown]'lookup caltmkmk.l1 (shadda?)' [kasra kasratan kasratanidgham kasratan.ii]'lookup caltmkmk.l1;    
 
   lookup caltmkmk.l2 {					
     pos base  [dal.isol] <anchor 0 0> markClass fatha <anchor 0 0> @fatha ;
@@ -1012,13 +1042,21 @@ lookup caltmkmk {
 
   pos dal.isol fatha'lookup caltmkmk.l2 kaf.init.beforelam;
 
+  lookup caltmkmk.l3 {					
+    pos base  [lam.init] 
+      <anchor function defaulbaseanchorfortop> markClass smallalef  <anchor function defaultopmarkanchor> @smallalef;
+  } caltmkmk.l3;
+
+  pos [lam.init]' [shadda]' [smallalef]'lookup caltmkmk.l3;
+  
+
 } caltmkmk;
 
 lookup lowmarkafterwawandreh {
 
   feature mkmk;
 
-  lookupflag UseMarkFilteringSet [kasra kasratan onedotdown twodotsdown kasratanidgham hamzabelow];
+  lookupflag UseMarkFilteringSet [kasra kasratan kasratan.ii onedotdown twodotsdown kasratanidgham hamzabelow];
 
   lookup lowmarkafterwawandreh.dots.l1 {					
     pos base /(behshape|hah)[.](init|isol)/ <anchor function defaultbaseanchorforlow> markClass [onedotdown] <anchor function defaullowmarkanchor> @onedotdown
@@ -1043,7 +1081,7 @@ lookup lowmarkafterwawandreh {
   lookup lowmarkafterwawandreh.lowmarks.l1 {					
     pos base /[.]init|[.]isol/
     <anchor function defaultbaseanchorforlow> markClass [kasra] <anchor function defaullowmarkanchor> @kasra
-    <anchor function defaultbaseanchorforlow> markClass [kasratan] <anchor function defaullowmarkanchor> @kasratan
+    <anchor function defaultbaseanchorforlow> markClass [kasratan kasratan.ii] <anchor function defaullowmarkanchor> @kasratan
     <anchor function defaultbaseanchorforlow> markClass [kasratanidgham] <anchor function defaullowmarkanchor> @lkasratanidgham;		
     
   } lowmarkafterwawandreh.lowmarks.l1;
@@ -1051,35 +1089,35 @@ lookup lowmarkafterwawandreh {
   lookup lowmarkafterwawandreh.lowmarks.l2 {					
     pos base /[.]init|[.]isol/
       <anchor function defaultbaseanchorforlow> markClass [kasra] <anchor function defaullowmarkanchor> @kasra
-    <anchor function defaultbaseanchorforlow> markClass [kasratan] <anchor function defaullowmarkanchor> @kasratan
+    <anchor function defaultbaseanchorforlow> markClass [kasratan kasratan.ii] <anchor function defaullowmarkanchor> @kasratan
     <anchor function defaultbaseanchorforlow> markClass [kasratanidgham] <anchor function defaullowmarkanchor> @lkasratanidgham;			
   } lowmarkafterwawandreh.lowmarks.l2;
 
   lookup lowmarkafterwawandreh.lowmarks.l3 {					
     pos base /[.]init|[.]isol/
       <anchor function defaultbaseanchorforlow> markClass [kasra] <anchor function defaullowmarkanchor> @kasra
-    <anchor function defaultbaseanchorforlow> markClass [kasratan] <anchor function defaullowmarkanchor> @kasratan
+    <anchor function defaultbaseanchorforlow> markClass [kasratan kasratan.ii] <anchor function defaullowmarkanchor> @kasratan
     <anchor function defaultbaseanchorforlow> markClass [kasratanidgham] <anchor function defaullowmarkanchor> @lkasratanidgham;		
   } lowmarkafterwawandreh.lowmarks.l3;
 
   lookup lowmarkafterwawandreh.lowmarks.l4 {					
     pos base /[.]init|[.]isol/
     <anchor function defaultbaseanchorforlow> markClass [kasra] <anchor function defaullowmarkanchor> @kasra
-    <anchor function defaultbaseanchorforlow> markClass [kasratan] <anchor function defaullowmarkanchor> @kasratan
+    <anchor function defaultbaseanchorforlow> markClass [kasratan kasratan.ii] <anchor function defaullowmarkanchor> @kasratan
     <anchor function defaultbaseanchorforlow> markClass [kasratanidgham] <anchor function defaullowmarkanchor> @lkasratanidgham;		
   } lowmarkafterwawandreh.lowmarks.l4;
 
   lookup lowmarkafterwawandreh.lowmarks.l5 {					
     pos base /[.]init|[.]isol/
     <anchor function defaultbaseanchorforlow> markClass [kasra] <anchor function defaullowmarkanchor> @kasra
-    <anchor function defaultbaseanchorforlow> markClass [kasratan] <anchor function defaullowmarkanchor> @kasratan
+    <anchor function defaultbaseanchorforlow> markClass [kasratan kasratan.ii] <anchor function defaullowmarkanchor> @kasratan
     <anchor function defaultbaseanchorforlow> markClass [kasratanidgham] <anchor function defaullowmarkanchor> @lkasratanidgham;		
   } lowmarkafterwawandreh.lowmarks.l5;
 
   lookup lowmarkafterwawandreh.lowmarks.l6 {					
     pos base /[.]init|[.]isol/
     <anchor function defaultbaseanchorforlow> markClass [kasra] <anchor function defaullowmarkanchor> @kasra
-    <anchor function defaultbaseanchorforlow> markClass [kasratan] <anchor function defaullowmarkanchor> @kasratan
+    <anchor function defaultbaseanchorforlow> markClass [kasratan kasratan.ii] <anchor function defaullowmarkanchor> @kasratan
     <anchor function defaultbaseanchorforlow> markClass [kasratanidgham] <anchor function defaullowmarkanchor> @lkasratanidgham;		
   } lowmarkafterwawandreh.lowmarks.l6;
 
@@ -1087,7 +1125,7 @@ lookup lowmarkafterwawandreh {
     ([kasra]?)
     /(behshape|hah)[.](init|isol)/'
     [onedotdown twodotsdown]'lookup lowmarkafterwawandreh.dots.l1
-    ([kasra kasratan kasratanidgham])'lookup lowmarkafterwawandreh.lowmarks.l1;
+    ([kasra kasratan kasratanidgham kasratan.ii])'lookup lowmarkafterwawandreh.lowmarks.l1;
 
 
   pos /^waw/
@@ -1100,7 +1138,7 @@ lookup lowmarkafterwawandreh {
     ([kasra]?)
     /(behshape|hah)[.](init|isol)/'
     [onedotdown twodotsdown]'lookup lowmarkafterwawandreh.dots.l2
-    ([kasra kasratan kasratanidgham ])'lookup lowmarkafterwawandreh.lowmarks.l3;
+    ([kasra kasratan kasratanidgham kasratan.ii])'lookup lowmarkafterwawandreh.lowmarks.l3;
 
   pos /^reh/
     ([kasra]?)
@@ -1111,23 +1149,23 @@ lookup lowmarkafterwawandreh {
   pos /^waw/
     ([kasra]?)
     /[.](init|isol)/'
-    [kasra kasratan kasratanidgham]'lookup lowmarkafterwawandreh.lowmarks.l2;
+    [kasra kasratan kasratanidgham kasratan.ii]'lookup lowmarkafterwawandreh.lowmarks.l2;
 
 
   pos /^reh.isol$|^reh.isol[.]added"|^reh.fina$|^reh.fina[.]added/
     ([kasra]?)
     /[.](init|isol)/'
-    [kasra kasratan kasratanidgham]'lookup lowmarkafterwawandreh.lowmarks.l4;
+    [kasra kasratan kasratanidgham kasratan.ii]'lookup lowmarkafterwawandreh.lowmarks.l4;
 
   pos reh.fina.afterbehshape
     ([kasra]?)
     /[.](init|isol)/'
-    [kasra kasratan kasratanidgham]'lookup lowmarkafterwawandreh.lowmarks.l5;
+    [kasra kasratan kasratanidgham kasratan.ii]'lookup lowmarkafterwawandreh.lowmarks.l5;
 
   pos reh.fina.afterseen
     ([kasra]?)
     /[.](init|isol)/'
-    [kasra kasratan kasratanidgham]'lookup lowmarkafterwawandreh.lowmarks.l6;
+    [kasra kasratan kasratanidgham kasratan.ii]'lookup lowmarkafterwawandreh.lowmarks.l6;
 
   # reh/waw beh hamzaabove
 
