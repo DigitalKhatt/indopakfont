@@ -12,6 +12,7 @@ namespace indopak {
     Lookup* getLookup(QString lookupName) override;
     CalcAnchor  getanchorCalcFunctions(QString functionName, Subtable* subtable) override;
     CursiveAnchorFunc  getCursiveFunctions(QString functionName, Subtable* subtable) override;
+    ~IndoPak(){}
   private:
     Lookup* defaultmarkposition();
     Lookup* waqfMarkPositioning();    
