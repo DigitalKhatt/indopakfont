@@ -58,4 +58,7 @@ secondarydef p leftjoinii q =
   z.lft.top  .. controls z_l3  and z_l4 .. 
  q
 enddef;
+boolean isForCoreText; isForCoreText = false;
+if not isForCoreText :
 defAxis("scaleX","SCLX",50,100,200,"params100");
+fi

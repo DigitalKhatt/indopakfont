@@ -1265,11 +1265,35 @@ feature rclt {
   lookup substwaqf;
 } rclt;
 
+lookup coretextfix {
+
+  feature curs;
+
+  lookup coretextfix.l1 {
+
+    lookupflag IgnoreMarks;
+
+    @rehwaw = [/^reh|^waw/];
+
+    pos @rehwaw /[.]init/' (/[.]medi/{0,10})'lookup allcursivejoinnortl  /[.]fina/'lookup allcursivejoinnortl;
+
+  } coretextfix.l1;
+
+  pos /^reh|^waw/ (@marks{0,3})' /^behshape[.]init/'lookup coretextfix.l1  [twodotsdown onedotdown hamzabelow]' ;
+
+  pos /^reh|^waw/ (@marks{0,3})' [/^behshape[.]init[.]beforeyeh/ /^lam[.]init[.]beforeyeh/ ]'lookup coretextfix.l1  ;
+
+} coretextfix;
+
 feature curs {  
   lookup cursivejoinrtl;
   lookup cursivejoin;    
   #lookup rehwawcursivecpp;   
   lookup rehwawcursive;
+  
+  # For CoreText  
+  #lookup allcursivejoinnortl;  
+  #lookup coretextfix;  
 } curs;
 
 
