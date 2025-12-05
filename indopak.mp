@@ -58,7 +58,18 @@ secondarydef p leftjoinii q =
   z.lft.top  .. controls z_l3  and z_l4 .. 
  q
 enddef;
-boolean isForCoreText; isForCoreText = false;
+boolean isForCoreText; isForCoreText = true;
+if isForCoreText :
+  def setCursiveAnchor(suffix pname)(expr pvalue)(expr anchortype) =
+    if anchortype = EntryAnchor:
+      defAnchor(pname,pvalue,EntryAnchorRTL);
+    elseif anchortype = ExitAnchor:
+     defAnchor(pname,pvalue,ExitAnchorRTL);
+    else: 
+      defAnchor(pname,pvalue,anchortype); 
+    fi
+  enddef;
+fi
 if not isForCoreText :
 defAxis("scaleX","SCLX",50,100,200,"params100");
 fi

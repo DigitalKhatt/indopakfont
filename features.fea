@@ -52,6 +52,7 @@ lookup miscellaneoussubst {
     sub hamzabelow.joined cgj by hamzabelow.joined; 
     sub  tatweel smallalef by smallalef.joined; 
     sub  tatweel hamzabelow by hamzabelow.joined; 
+    sub  tatweel hamzaabove cgj by hamzaabove.joined; 
     sub  tatweel hamzaabove by hamzaabove.joined;      
     sub  tatweel smallhighyeh by smallhighyeh;      
     sub  tatweel smallhighnoon by smallhighnoon;  
@@ -67,6 +68,8 @@ lookup miscellaneoussubst {
   sub [smallalef] cgj'lookup miscellaneoussubst.l1 hamzaabove';  
 
   sub [hamzaabove maddahabove meemiqlab hamzaabove.joined hamzabelow hamzabelow.joined ]'lookup miscellaneoussubst.l1 cgj';
+
+  sub tatweel'lookup miscellaneoussubst.l1 [hamzaabove]' cgj';
 
   sub tatweel'lookup miscellaneoussubst.l1 [smallalef hamzaabove smallhighyeh smallhighnoon hamzabelow];
 
@@ -185,9 +188,13 @@ lookup basmala.kern {
     lookupflag IgnoreMarks;
 
     pos [meem.fina.basmala]'<-200 0 0 0> space' [alef.isol]'<0 0 -100 0>;
+#if isForCoreText
+    pos [reh.fina]'<-200 0 0 0> [hah.init.basmala];
+    pos [reh.fina]'<-200 0 0 0> [hah.init.basmala.ii];
+#else
     pos [hah.init.basmala]'<200 0 0 0>;
     pos [hah.init.basmala.ii]'<200 0 0 0>;
-
+#endif;
 
 } basmala.kern ;
 
@@ -1265,6 +1272,46 @@ feature rclt {
   lookup substwaqf;
 } rclt;
 
+#if isForCoreText
+lookup adjustverticalpos {
+  feature curs;
+  lookupflag IgnoreMarks;
+  pos [lam.medi.laf] [alef.fina.laf]'<0 -170 0 0>;
+  pos [lam.medi.laf.afterkaf] [alef.fina.laf]'<0 -187 0 0>;
+  pos [behshape.medi.beforeyeh] [yehshape.fina.afterbeh]'<0 -34 0 0>;
+  pos [behshape.medi.beforeyeh] [yehshape.fina.afterbeh.expa]'<0 -87 0 0>;
+  pos [seen.init.beforeyeh] [yehshape.fina.afterbeh]'<0 -62 0 0>;
+  pos [seen.init.beforeyeh] [yehshape.fina.afterbeh.expa]'<0 -115 0 0>;
+  pos [seen.medi.beforeyeh] [yehshape.fina.afterbeh]'<0 -137 0 0>;
+  pos [seen.medi.beforeyeh] [yehshape.fina.afterbeh.expa]'<0 -190 0 0>;
+  pos [sad.init.beforeyeh] [yehshape.fina.afterbeh]'<0 -122 0 0>;
+  pos [sad.init.beforeyeh] [yehshape.fina.afterbeh.expa]'<0 -175 0 0>;
+  pos [sad.medi.beforeyeh] [yehshape.fina.afterbeh]'<0 -122 0 0>;
+  pos [sad.medi.beforeyeh] [yehshape.fina.afterbeh.expa]'<0 -175 0 0>;
+  pos [lam.init.lamalef] [alef.fina.lamalef]'<0 1 0 0>;
+  pos [lam.medi.beforeyeh] [yehshape.fina.ii]'<0 -98 0 0>;
+  pos [lam.medi.beforeyeh] [yehshape.fina.ii.expa]'<0 -148 0 0>;
+  pos [fehshape.medi.beforeyeh] [yehshape.fina.ii]'<0 -63 0 0>;
+  pos [fehshape.medi.beforeyeh] [yehshape.fina.ii.expa]'<0 -113 0 0>;
+  pos [hah.medi.beforeyeh] [yehshape.fina.ii]'<0 -100 0 0>;
+  pos [hah.medi.beforeyeh] [yehshape.fina.ii.expa]'<0 -150 0 0>;
+  pos [hah.medi.afterbeh.beforeyeh] [yehshape.fina.ii]'<0 -100 0 0>;
+  pos [hah.medi.afterbeh.beforeyeh] [yehshape.fina.ii.expa]'<0 -150 0 0>;
+  pos [hah.medi.afterlam.beforeyeh] [yehshape.fina.ii]'<0 -100 0 0>;
+  pos [hah.medi.afterlam.beforeyeh] [yehshape.fina.ii.expa]'<0 -150 0 0>;
+  pos [heh.medi.beforeyeh] [yehshape.fina.ii]'<0 -43 0 0>;
+  pos [heh.medi.beforeyeh] [yehshape.fina.ii.expa]'<0 -93 0 0>;
+  pos [ain.medi.beforeyeh] [yehshape.fina.ii]'<0 -166 0 0>;
+  pos [ain.medi.beforeyeh] [yehshape.fina.ii.expa]'<0 -216 0 0>;
+  pos [tah.medi.beforeyeh] [yehshape.fina.ii]'<0 -257 0 0>;
+  pos [tah.medi.beforeyeh] [yehshape.fina.ii.expa]'<0 -307 0 0>;
+  pos [kaf.medi.beforeyeh] [yehshape.fina.ii]'<0 -21 0 0>;
+  pos [kaf.medi.beforeyeh] [yehshape.fina.ii.expa]'<0 -71 0 0>;
+  pos [meem.medi.beforeyeh] [yehshape.fina.ii]'<0 -88 0 0>;
+  pos [meem.medi.beforeyeh] [yehshape.fina.ii.expa]'<0 -138 0 0>;
+} adjustverticalpos;
+
+
 lookup coretextfix {
 
   feature curs;
@@ -1284,16 +1331,21 @@ lookup coretextfix {
   pos /^reh|^waw/ (@marks{0,3})' [/^behshape[.]init[.]beforeyeh/ /^lam[.]init[.]beforeyeh/ ]'lookup coretextfix.l1  ;
 
 } coretextfix;
+#endif;
 
 feature curs {  
+#if isForCoreText
+  lookup adjustverticalpos;
+#endif;
   lookup cursivejoinrtl;
   lookup cursivejoin;    
   #lookup rehwawcursivecpp;   
   lookup rehwawcursive;
   
-  # For CoreText  
-  #lookup allcursivejoinnortl;  
-  #lookup coretextfix;  
+#if isForCoreText  
+  lookup allcursivejoinnortl;  
+  lookup coretextfix;  
+#endif;
 } curs;
 
 
