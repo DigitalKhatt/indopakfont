@@ -30,7 +30,9 @@ void IndoPak::generateGlyphs() {
       if (edges->glyphtype != (int)GlyphType::GlyphTypeColored && edges->glyphtype != (int)GlyphType::GlyphTypeTemp) {
         m_layout->glyphNamePerCode[glyph.charcode] = glyph.name;
         m_layout->glyphCodePerName[glyph.name] = glyph.charcode;
-        m_layout->unicodeToGlyphCode.insert(glyph.charcode, glyph.charcode);
+        if (glyph.unicode != -1) {
+          m_layout->unicodeToGlyphCode.insert(glyph.unicode, glyph.charcode);
+        }
 
         if (edges->glyphtype == (int)GlyphType::GlyphTypeMark) {
           classes["marks"].insert(glyph.name);
@@ -2369,7 +2371,7 @@ Lookup* IndoPak::glyphalternates() {
       alternates.append({substcode, 0, 0});
       alternateSubtable->alternates[code] = alternates;
 
-      for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 6.0F); leftTatweel += 0.5) {
+      for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 6.0); leftTatweel += 0.5) {
         GlyphParameters parameters;
         parameters.lefttatweel = leftTatweel;
         parameters.righttatweel = 0.0;
@@ -2460,7 +2462,7 @@ Lookup* IndoPak::glyphalternates() {
     alternates.append({substcode, 0, 0});
     alternateSubtable->alternates[code] = alternates;
 
-    for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 6.0F); leftTatweel += 0.5) {
+    for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 6.0); leftTatweel += 0.5) {
       GlyphParameters parameters;
       parameters.lefttatweel = leftTatweel;
       parameters.righttatweel = 0.0;
@@ -2545,13 +2547,13 @@ Lookup* IndoPak::glyphalternates() {
   auto glyphCode = m_layout->glyphCodePerName["behshape.medi"];
   int substcode = m_layout->glyphCodePerName["behshape.medi.expa"];
 
-  for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 3.0F); leftTatweel += 0.5) {
+  for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 3.0); leftTatweel += 0.5) {
     QVector<ExtendedGlyph> alternates;
     GlyphParameters parameters;
     parameters.lefttatweel = leftTatweel;
     parameters.righttatweel = 0.0;
     GlyphVis* newglyph = m_layout->getAlternate(glyphCode, parameters, !isExtended, !isExtended);
-    for (double leftTatweel2 = leftTatweel + 1; leftTatweel2 <= std::min(valueLimits.maxLeft, 6.0F); leftTatweel2 += 1) {
+    for (double leftTatweel2 = leftTatweel + 1; leftTatweel2 <= std::min(valueLimits.maxLeft, 6.0); leftTatweel2 += 1) {
       alternates.append({substcode, leftTatweel2, 0});
     }
     alternateSubtable->alternates[newglyph->charcode] = alternates;
@@ -2566,7 +2568,7 @@ Lookup* IndoPak::glyphalternates() {
     auto valueLimits = glyph.second;
 
     if (valueLimits.maxLeft > 0) {
-      for (double leftTatweel = 0; leftTatweel <= std::min(valueLimits.maxLeft, 3.0F); leftTatweel += 0.5) {
+      for (double leftTatweel = 0; leftTatweel <= std::min(valueLimits.maxLeft, 3.0); leftTatweel += 0.5) {
         QVector<ExtendedGlyph> alternates;
         GlyphParameters parameters;
         parameters.lefttatweel = leftTatweel;
@@ -2611,20 +2613,20 @@ Lookup* IndoPak::glyphalternates() {
 
     if (valueLimits.maxRight > 0) {
       QVector<ExtendedGlyph> alternates;
-      for (double righttatweel = 0.5; righttatweel <= std::min(valueLimits.maxRight, 6.0F); righttatweel += 0.5) {
+      for (double righttatweel = 0.5; righttatweel <= std::min(valueLimits.maxRight, 6.0); righttatweel += 0.5) {
         alternates.append({glyphCode, 0, righttatweel});
       }
       alternateSubtable->alternates[glyphCode] = alternates;
     };
 
     if (valueLimits.maxLeft > 0 && valueLimits.maxRight > 0) {
-      for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 3.0F); leftTatweel += 0.5) {
+      for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 3.0); leftTatweel += 0.5) {
         QVector<ExtendedGlyph> alternates;
         GlyphParameters parameters;
         parameters.lefttatweel = leftTatweel;
         parameters.righttatweel = 0.0;
         GlyphVis* newglyph = m_layout->getAlternate(glyphCode, parameters, !isExtended, !isExtended);
-        for (double righttatweel = 0.5; righttatweel <= std::min(valueLimits.maxRight, 6.0F); righttatweel += 0.5) {
+        for (double righttatweel = 0.5; righttatweel <= std::min(valueLimits.maxRight, 6.0); righttatweel += 0.5) {
           alternates.append({glyphCode, leftTatweel, righttatweel});
         }
         alternateSubtable->alternates[newglyph->charcode] = alternates;
