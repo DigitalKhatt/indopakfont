@@ -38,7 +38,7 @@ class IndoPak : public Automedina {
   Lookup* shrinkstretchlt();
   void addchars();
   void generateGlyphs();
-  void generateAyas(QString ayaName, bool colored, int unicode);
+  void generateAyas(std::string ayaName, bool colored, int unicode);
   /*using LookupFunction = void (IndoPak::*)();
   std::map<QString, LookupFunction> lookups;*/
   // for Core Text. See bug https://github.com/DigitalKhatt/madinafont/issues/21

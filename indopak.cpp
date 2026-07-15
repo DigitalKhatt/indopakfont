@@ -108,21 +108,22 @@ void IndoPak::generateGlyphs() {
   m_layout->glyphs = glyphs;
 }
 
-void IndoPak::generateAyas(QString ayaName, bool colored, int unicode) {
+void IndoPak::generateAyas(std::string ayaName, bool colored, int unicode) {
+  QString ayaNameQ = QString::fromStdString(ayaName);
   int codechar = unicode - 1;
   for (int ayaNumber = 1; ayaNumber <= 286; ayaNumber++) {
     codechar = unicode == -1 ? -1 : codechar + 1;
     QString setcolored;
     if (colored) {
-      setcolored = QString("coloredglyph:=\"%1.colored%2\"").arg(ayaName).arg(ayaNumber);
+      setcolored = QString("coloredglyph:=\"%1.colored%2\"").arg(ayaNameQ).arg(ayaNumber);
     }
-    QString data = QString("beginchar(%1%2,%4,-1,1,-1);\n%%beginbody\ngenAyaNumber(%1, %2,380);%3;endchar;").arg(ayaName).arg(ayaNumber).arg(setcolored).arg(codechar);
-    m_layout->font->executeMetaPost(data);
-    addedGlyphs[QString("%1%2").arg(ayaName).arg(ayaNumber).toStdString()] = data.toStdString();
+    QString data = QString("beginchar(%1%2,%4,-1,1,-1);\n%%beginbody\ngenAyaNumber(%1, %2,380);%3;endchar;").arg(ayaNameQ).arg(ayaNumber).arg(setcolored).arg(codechar);
+    m_layout->font->executeMetaPost(data.toLatin1().toStdString());
+    addedGlyphs[QString("%1%2").arg(ayaNameQ).arg(ayaNumber).toStdString()] = data.toStdString();
     if (colored) {
-      data = QString("beginchar(%1.colored%2,-1,-1,5,-1);\n%%beginbody\ngenAyaNumber(%1.colored, %2,380);endchar;").arg(ayaName).arg(ayaNumber);
-      m_layout->font->executeMetaPost(data);
-      addedGlyphs[QString("%1.colored%2").arg(ayaName).arg(ayaNumber).toStdString()] = data.toStdString();
+      data = QString("beginchar(%1.colored%2,-1,-1,5,-1);\n%%beginbody\ngenAyaNumber(%1.colored, %2,380);endchar;").arg(ayaNameQ).arg(ayaNumber);
+      m_layout->font->executeMetaPost(data.toLatin1().toStdString());
+      addedGlyphs[QString("%1.colored%2").arg(ayaNameQ).arg(ayaNumber).toStdString()] = data.toStdString();
     }
   }
 }
