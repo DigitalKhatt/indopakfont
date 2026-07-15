@@ -48,7 +48,7 @@ class Waqffinabasemark : public AnchorCalc {
  public:
   Waqffinabasemark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
   QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
-    GlyphVis& curr = _y.glyphs[glyphName];
+    GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
 
     int width = curr.width / 2 + adjust.x();
     int height = 0;
@@ -64,7 +64,7 @@ class Waqffinamark : public AnchorCalc {
  public:
   Waqffinamark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
   QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
-    GlyphVis& curr = _y.glyphs[glyphName];
+    GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
 
     int width = curr.width / 2 + adjust.x();
     int height = curr.height + 30 + adjust.y();
@@ -80,7 +80,7 @@ class Waqfbasebelow : public AnchorCalc {
  public:
   Waqfbasebelow(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
   QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
-    GlyphVis& curr = _y.glyphs[glyphName];
+    GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
 
     int width = curr.width / 2 + adjust.x();
     int height = curr.height + 30 + adjust.y();
@@ -96,7 +96,7 @@ class Waqfmarkabove : public AnchorCalc {
  public:
   Waqfmarkabove(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
   QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
-    GlyphVis& curr = _y.glyphs[glyphName];
+    GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
 
     int width = curr.width / 2 + adjust.x();
     int height = 0;

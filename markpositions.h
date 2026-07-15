@@ -30,7 +30,7 @@ namespace indopak {
         Defaulbaseanchorfortop(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
         QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
-            GlyphVis* curr = &_y.glyphs[glyphName];
+            GlyphVis* curr = &_y.glyphs[glyphName.toStdString()];
 
 
 
@@ -97,7 +97,7 @@ namespace indopak {
         QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
 
-            GlyphVis* curr = &_y.glyphs[glyphName];
+            GlyphVis* curr = &_y.glyphs[glyphName.toStdString()];
 
             curr = curr->getAlternate(parameters);
 
@@ -128,7 +128,7 @@ namespace indopak {
         Defaultopmarkanchor(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
         QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
-            GlyphVis* curr = &_y.glyphs[glyphName];
+            GlyphVis* curr = &_y.glyphs[glyphName.toStdString()];
 
             auto ori_width = curr->width;
             auto ori_height = curr->height;
@@ -163,7 +163,7 @@ namespace indopak {
         Defaullowmarkanchor(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
         QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
-            GlyphVis* glyph = &_y.glyphs[glyphName];
+            GlyphVis* glyph = &_y.glyphs[glyphName.toStdString()];
 
             glyph = glyph->getAlternate(parameters);
 
@@ -192,7 +192,7 @@ namespace indopak {
         Defaultmarkabovemark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
         QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
-            GlyphVis& curr = _y.glyphs[glyphName];
+            GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
 
             int width = curr.width * 0.5;
             int height = curr.height;
@@ -214,7 +214,7 @@ namespace indopak {
         Defaultmarkbelowmark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
         QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
-            GlyphVis& curr = _y.glyphs[glyphName];
+            GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
 
 
             int width = curr.width * 0.5;
@@ -239,7 +239,7 @@ namespace indopak {
 
 
 
-            GlyphVis* curr = &_y.glyphs[glyphName];
+            GlyphVis* curr = &_y.glyphs[glyphName.toStdString()];
 
 
             curr = curr->getAlternate(parameters);
@@ -251,7 +251,7 @@ namespace indopak {
 
             //if (curr->name == "alternatechar" || curr->name.contains(".added_")) {
             if (curr->expanded) {
-                originalglyph = &_y.glyphs[QString::fromStdString(curr->originalglyph)];
+                originalglyph = &_y.glyphs[curr->originalglyph];
                 adjustoriginal = _subtable.classes[className.toStdString()].baseparameters[curr->originalglyph];
                 if (curr->leftAnchor) {
                     double xshift = curr->matrix.xpart - originalglyph->matrix.xpart;
@@ -291,7 +291,7 @@ namespace indopak {
         Defaulbaseanchorfortopdots(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
         QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
-            GlyphVis* curr = &_y.glyphs[glyphName];
+            GlyphVis* curr = &_y.glyphs[glyphName.toStdString()];
 
             curr = curr->getAlternate(parameters);
 
@@ -335,7 +335,7 @@ namespace indopak {
         Defaulbaseanchorforlowdots(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
         QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
 
-            GlyphVis* curr = &_y.glyphs[glyphName];
+            GlyphVis* curr = &_y.glyphs[glyphName.toStdString()];
 
             curr = curr->getAlternate(parameters);
 
@@ -369,7 +369,7 @@ namespace indopak {
 
 
 
-            GlyphVis* curr = &_y.glyphs[glyphName];
+            GlyphVis* curr = &_y.glyphs[glyphName.toStdString()];
 
             curr = curr->getAlternate(parameters);
 

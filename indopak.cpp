@@ -25,7 +25,7 @@ void IndoPak::generateGlyphs() {
     auto name = QString(edges->charname);
 
     if (name != "alternatechar") {
-      GlyphVis& glyph = *glyphs.insert(name, GlyphVis(m_layout, edges));
+      GlyphVis& glyph = glyphs.insert_or_assign(name.toStdString(), GlyphVis(m_layout, edges)).first->second;
 
       if (edges->glyphtype != (int)GlyphType::GlyphTypeColored && edges->glyphtype != (int)GlyphType::GlyphTypeTemp) {
         m_layout->glyphNamePerCode[glyph.charcode] = QString::fromStdString(glyph.name);
@@ -74,7 +74,7 @@ void IndoPak::generateGlyphs() {
 
   auto addFake = [this](QString glyphName, std::uint16_t unicode, std::uint16_t codechar) {
     auto code = unicode;  // codechar; //layout.glyphNamePerCode.lastKey();
-    GlyphVis& glyph = *glyphs.insert(glyphName, GlyphVis());
+    GlyphVis& glyph = glyphs.insert_or_assign(glyphName.toStdString(), GlyphVis()).first->second;
     glyph.name = glyphName.toStdString();
     glyph.charcode = code;
 
@@ -718,7 +718,7 @@ Lookup* IndoPak::rehwawcursivecpp() {
 
   for (auto glyphcode : glyphcodes) {
     QString glyphName = m_layout->glyphNamePerCode[glyphcode];
-    auto& glyph = glyphs[glyphName];
+    auto& glyph = glyphs[glyphName.toStdString()];
 
     rehisol->anchors[glyphcode].entry = QPoint(glyph.width, 0);
     wawisol->anchors[glyphcode].entry = QPoint(glyph.width, 0);
@@ -879,7 +879,7 @@ Lookup* IndoPak::defaultmarkposition() {
   newsubtable->base = {".init|.medi"};
   newsubtable->classes["hamzabelow"].mark = {"hamzabelow.joined"};
   newsubtable->classes["hamzabelow"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis* curr = &glyphs[glyphName];
+    GlyphVis* curr = &glyphs[glyphName.toStdString()];
 
     curr = curr->getAlternate(parameters);
 
@@ -889,7 +889,7 @@ Lookup* IndoPak::defaultmarkposition() {
     return QPoint(width, height);
   };
   newsubtable->classes["hamzabelow"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis* curr = &glyphs[glyphName];
+    GlyphVis* curr = &glyphs[glyphName.toStdString()];
     return QPoint(adjust.x(), adjust.y() + 100 + curr->height);
   };
 
@@ -1005,7 +1005,7 @@ Lookup* IndoPak::defaultmarkposition() {
   newsubtable->base = {"bases"};
   newsubtable->classes["takhallus"].mark = {"takhallus"};
   newsubtable->classes["takhallus"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
 
     auto disp = 1000;
 
@@ -1015,7 +1015,7 @@ Lookup* IndoPak::defaultmarkposition() {
     return QPoint(width, height);
   };
   newsubtable->classes["takhallus"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
     return QPoint(adjust.x() + curr.width / 2, adjust.y());
   };
 
@@ -1027,7 +1027,7 @@ Lookup* IndoPak::defaultmarkposition() {
   newsubtable->base = {"aya"};
   newsubtable->classes["waqfmarksaya"].mark = {"waqfmarksaya"};
   newsubtable->classes["waqfmarksaya"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
 
     int width = curr.width / 2 + adjust.x();
     int height = 50 + curr.height + adjust.y();
@@ -1035,7 +1035,7 @@ Lookup* IndoPak::defaultmarkposition() {
     return QPoint(width, height);
   };
   newsubtable->classes["waqfmarksaya"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
     return QPoint(adjust.x() + curr.width / 2, adjust.y());
   };
 
@@ -1047,7 +1047,7 @@ Lookup* IndoPak::defaultmarkposition() {
   newsubtable->base = {"waqfbase.isol", "disputedeoa"};
   newsubtable->classes["waqfmarksfina"].mark = {"waqfmarksfina"};
   newsubtable->classes["waqfmarksfina"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
 
     auto disp = glyphName == "waqfbase.isol" ? 330 : 30;
 
@@ -1057,7 +1057,7 @@ Lookup* IndoPak::defaultmarkposition() {
     return QPoint(width, height);
   };
   newsubtable->classes["waqfmarksfina"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
     int width = adjust.x() + curr.width / 2;
     int height = adjust.y();
     return QPoint(width, height);
@@ -1155,7 +1155,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
                                                                : 500;
 
       auto basefunction = [this, waqfKern, waqfHeight](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-        GlyphVis& curr = glyphs[glyphName];
+        GlyphVis& curr = glyphs[glyphName.toStdString()];
 
         int height = waqfHeight;
         auto width = -waqfKern;  // curr.bbox.llx;
@@ -1167,7 +1167,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
       };
 
       auto markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-        GlyphVis& curr = glyphs[glyphName];
+        GlyphVis& curr = glyphs[glyphName.toStdString()];
 
         int height = 0;
         int width = 0;
@@ -1240,7 +1240,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
   m_layout->addLookup(sublookup);
 
   auto basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
 
     int height = 0;  // (int)curr.height + spacebasetotopmark;
     int width = curr.width / 2;
@@ -1252,7 +1252,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
   };
 
   auto markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
 
     int height = (int)curr.height + 50;
     int width = curr.width / 2;
@@ -1408,7 +1408,7 @@ Lookup* IndoPak::defaultmarkdotmarks() {
   topsubtable->base = {"topdotmarks"};
 
   auto basetopfunction = [this, topsubtable](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
 
     int width = curr.width * 0.5;
     int height = (int)curr.height + 80;
@@ -1446,7 +1446,7 @@ Lookup* IndoPak::defaultmarkdotmarks() {
   bottomsubtable->base = {"downdotmarks"};
 
   auto basedownfunction = [this, bottomsubtable](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName];
+    GlyphVis& curr = glyphs[glyphName.toStdString()];
 
     int depth = -(int)curr.depth + 50;
     int width = curr.width * 0.5;
@@ -1503,7 +1503,7 @@ Lookup* IndoPak::pointmarks() {
     newsubtable->compiledRule = ChainingSubtable::CompiledRule();
 
     newsubtable->compiledRule.backtrack.push_back({classtoUnicode("bases")});
-    newsubtable->compiledRule.input.push_back(std::unordered_set{(std::uint16_t)glyphs[sublookupName].charcode});
+    newsubtable->compiledRule.input.push_back(std::unordered_set{(std::uint16_t)glyphs[sublookupName.toStdString()].charcode});
     newsubtable->compiledRule.input.push_back(classtoUnicode("marks"));
 
     newsubtable->compiledRule.lookupRecords.push_back({1, asStdString(sublookupName)});
@@ -1707,7 +1707,7 @@ Lookup* IndoPak::ayanumberskern() {
   singleadjsubtable->name = asStdString(sublookup->name);
 
   for (auto digit : digitySet) {
-        auto& onesglyph = glyphs[m_layout->glyphNamePerCode.value(digit)];
+        auto& onesglyph = glyphs[m_layout->glyphNamePerCode.value(digit).toStdString()];
         qint16 kern = -(ayaGlyph.width / 2 - onesglyph.width / 2);
         singleadjsubtable->singlePos[digit] = { 700,yoffset,0,0 };
   }
@@ -1741,7 +1741,7 @@ Lookup* IndoPak::ayanumberskern() {
   singleadjsubtable->name = asStdString(sublookup->name);
 
   for (auto digit : digitySet) {
-        auto& onesglyph = glyphs[m_layout->glyphNamePerCode.value(digit)];
+        auto& onesglyph = glyphs[m_layout->glyphNamePerCode.value(digit).toStdString()];
         int leftBearing = 0;
         qint16 kern = leftBearing + (ayaGlyph.width - leftBearing) / 2 + onesglyph.width / 2;
         singleadjsubtable->singlePos[digit] = { kern,yoffset,0,0 };
@@ -1945,16 +1945,16 @@ Lookup* IndoPak::forheh() {
   single->subtables.append(singlesubtable);
   singlesubtable->name = asStdString(single->name);
 
-  for (auto& glyph : glyphs) {
+  for (auto& [glyphKey, glyph] : glyphs) {
     if (classes["haslefttatweel"].contains(glyph.name)) {
       QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)((glyph.charlt + 2) * 100));
-      if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+      if (glyphs.contains(destName.toStdString())) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
       }
     } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
       QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt + 2) * 100));
-      if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+      if (glyphs.contains(destName.toStdString())) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
       }
     }
   }
@@ -1998,16 +1998,16 @@ Lookup* IndoPak::forhamza() {
 
   int tatweel = 2;
 
-  for (auto& glyph : glyphs) {
+  for (auto& [glyphKey, glyph] : glyphs) {
     if (classes["haslefttatweel"].contains(glyph.name)) {
       QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)((glyph.charlt + tatweel) * 100));
-      if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+      if (glyphs.contains(destName.toStdString())) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
       }
     } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
       QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt + tatweel) * 100));
-      if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+      if (glyphs.contains(destName.toStdString())) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
       }
     }
   }
@@ -2122,7 +2122,7 @@ Lookup* IndoPak::shrinkstretchlt(float lt, QString featureName) {
   single->subtables.append(singlesubtable);
   singlesubtable->name = asStdString(single->name);
 
-  for (auto& glyph : glyphs) {
+  for (auto& [glyphKey, glyph] : glyphs) {
     // QRegularExpression reg2("beginchar\\((.*?),(.*?),(.*?),(.*?)\\);");
     QRegularExpression regname("(.*)[.](minuslt|pluslt)_(.*)");
     QRegularExpressionMatch match = regname.match(QString::fromStdString(glyph.name));
@@ -2133,13 +2133,13 @@ Lookup* IndoPak::shrinkstretchlt(float lt, QString featureName) {
     } else if (classes["haslefttatweel"].contains(glyph.name)) {
       if (lt < 0) {
         QString destName = QStringLiteral("%1.minuslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)(lt * -100));
-        if (glyphs.contains(destName)) {
-          singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+        if (glyphs.contains(destName.toStdString())) {
+          singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
         }
       } else {
         QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)(lt * 100));
-        if (glyphs.contains(destName)) {
-          singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+        if (glyphs.contains(destName.toStdString())) {
+          singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
         }
       }
     }
@@ -2150,14 +2150,14 @@ Lookup* IndoPak::shrinkstretchlt(float lt, QString featureName) {
 
                             if (classes["haslefttatweel"].contains(glyph.name)) {
                                             QString destName = QStringLiteral("%1.minuslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)(lt * 100));
-                                            if (glyphs.contains(destName)) {
-                                                            singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+                                            if (glyphs.contains(destName.toStdString())) {
+                                                            singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
                                             }
                             }
                             else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
                                             QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt - shrink) * 100));
-                                            if (glyphs.contains(destName)) {
-                                                            singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+                                            if (glyphs.contains(destName.toStdString())) {
+                                                            singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
                                             }
                             }*/
   }
@@ -2199,16 +2199,16 @@ Lookup* IndoPak::forsmallhighwaw() {
   single->subtables.append(singlesubtable);
   singlesubtable->name = asStdString(single->name);
 
-  for (auto& glyph : glyphs) {
+  for (auto& [glyphKey, glyph] : glyphs) {
     if (classes["haslefttatweel"].contains(glyph.name)) {
       QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)((glyph.charlt + tatweel) * 100));
-      if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+      if (glyphs.contains(destName.toStdString())) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
       }
     } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
       QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt + tatweel) * 100));
-      if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
+      if (glyphs.contains(destName.toStdString())) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
       }
     }
   }
