@@ -38,8 +38,8 @@ namespace indopak {
 
 
 
-            if (curr->conatinsAnchor(className, GlyphVis::AnchorType::MarkAnchor)) {
-                QPoint anchor = curr->getAnchor(className, GlyphVis::AnchorType::MarkAnchor) + adjust;
+            if (curr->conatinsAnchor(className.toStdString(), GlyphVis::AnchorType::MarkAnchor)) {
+                QPoint anchor = curr->getAnchor(className.toStdString(), GlyphVis::AnchorType::MarkAnchor) + adjust;
                 return anchor;
             }
             else {
@@ -105,7 +105,7 @@ namespace indopak {
 
             QPoint adjustoriginal = getAdjustment(_y, _subtable, curr, className, adjust, parameters, &originalglyph);
 
-            if (curr->originalglyph.contains("isol.expa")) {
+            if (curr->originalglyph.find("isol.expa") != std::string::npos) {
                 originalglyph = curr;
                 adjustoriginal = {};
             }
@@ -251,8 +251,8 @@ namespace indopak {
 
             //if (curr->name == "alternatechar" || curr->name.contains(".added_")) {
             if (curr->expanded) {
-                originalglyph = &_y.glyphs[curr->originalglyph];
-                adjustoriginal = _subtable.classes[className].baseparameters[curr->originalglyph];
+                originalglyph = &_y.glyphs[QString::fromStdString(curr->originalglyph)];
+                adjustoriginal = _subtable.classes[className.toStdString()].baseparameters[curr->originalglyph];
                 if (curr->leftAnchor) {
                     double xshift = curr->matrix.xpart - originalglyph->matrix.xpart;
                     double yshift = curr->matrix.ypart - originalglyph->matrix.ypart;
@@ -274,7 +274,7 @@ namespace indopak {
         QPoint caclAnchor(GlyphVis* glyph) {
             int height = 250;
             int width = 0; // glyph->width * 0.5;
-            if (!glyph->name.contains("isol")) {
+            if (glyph->name.find("isol") == std::string::npos) {
                 width = glyph->width * 0.0;
             }
             /*
@@ -295,8 +295,8 @@ namespace indopak {
 
             curr = curr->getAlternate(parameters);
 
-            if (curr->conatinsAnchor(className, GlyphVis::AnchorType::MarkAnchor)) {
-                QPoint anchor = curr->getAnchor(className, GlyphVis::AnchorType::MarkAnchor) + adjust;
+            if (curr->conatinsAnchor(className.toStdString(), GlyphVis::AnchorType::MarkAnchor)) {
+                QPoint anchor = curr->getAnchor(className.toStdString(), GlyphVis::AnchorType::MarkAnchor) + adjust;
                 return anchor;
             }
 
@@ -340,8 +340,8 @@ namespace indopak {
             curr = curr->getAlternate(parameters);
 
 
-            if (curr->conatinsAnchor(className, GlyphVis::AnchorType::MarkAnchor)) {
-                QPoint anchor = curr->getAnchor(className, GlyphVis::AnchorType::MarkAnchor) + adjust;
+            if (curr->conatinsAnchor(className.toStdString(), GlyphVis::AnchorType::MarkAnchor)) {
+                QPoint anchor = curr->getAnchor(className.toStdString(), GlyphVis::AnchorType::MarkAnchor) + adjust;
                 return anchor;
             }
             else if ((curr->name == "behshape.fina.expa" || curr->originalglyph == "behshape.fina.expa") && curr->conatinsAnchor("dotbelow", GlyphVis::AnchorType::MarkAnchor)) {
@@ -376,8 +376,8 @@ namespace indopak {
             //QPoint adjustoriginal = getAdjustment(_y, _subtable, originalglyph, className, adjust, lefttatweel, righttatweel, &originalglyph);
 
             // TODO يُضَٰهِـُٔونَ different from standard
-            if (curr->name.contains("added")) {
-                adjust = _subtable.classes[className].baseparameters[curr->originalglyph];
+            if (curr->name.find("added") != std::string::npos) {
+                adjust = _subtable.classes[className.toStdString()].baseparameters[curr->originalglyph];
             }
 
 

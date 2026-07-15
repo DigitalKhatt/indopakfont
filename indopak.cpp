@@ -28,8 +28,8 @@ void IndoPak::generateGlyphs() {
       GlyphVis& glyph = *glyphs.insert(name, GlyphVis(m_layout, edges));
 
       if (edges->glyphtype != (int)GlyphType::GlyphTypeColored && edges->glyphtype != (int)GlyphType::GlyphTypeTemp) {
-        m_layout->glyphNamePerCode[glyph.charcode] = glyph.name;
-        m_layout->glyphCodePerName[glyph.name] = glyph.charcode;
+        m_layout->glyphNamePerCode[glyph.charcode] = QString::fromStdString(glyph.name);
+        m_layout->glyphCodePerName[QString::fromStdString(glyph.name)] = glyph.charcode;
         if (glyph.unicode != -1) {
           m_layout->unicodeToGlyphCode.insert(glyph.unicode, glyph.charcode);
         }
@@ -72,14 +72,14 @@ void IndoPak::generateGlyphs() {
     }
   }
 
-  auto addFake = [this](QString glyphName, quint16 unicode, quint16 codechar) {
+  auto addFake = [this](QString glyphName, std::uint16_t unicode, std::uint16_t codechar) {
     auto code = unicode;  // codechar; //layout.glyphNamePerCode.lastKey();
     GlyphVis& glyph = *glyphs.insert(glyphName, GlyphVis());
-    glyph.name = glyphName;
+    glyph.name = glyphName.toStdString();
     glyph.charcode = code;
 
-    m_layout->glyphNamePerCode[glyph.charcode] = glyph.name;
-    m_layout->glyphCodePerName[glyph.name] = glyph.charcode;
+    m_layout->glyphNamePerCode[glyph.charcode] = QString::fromStdString(glyph.name);
+    m_layout->glyphCodePerName[QString::fromStdString(glyph.name)] = glyph.charcode;
     m_layout->unicodeToGlyphCode.insert(unicode, glyph.charcode);
   };
   addFake("alef.maddahabove.isol", 0x0622, m_layout->glyphNamePerCode.lastKey() + 1);
@@ -118,11 +118,11 @@ void IndoPak::generateAyas(QString ayaName, bool colored, int unicode) {
     }
     QString data = QString("beginchar(%1%2,%4,-1,1,-1);\n%%beginbody\ngenAyaNumber(%1, %2,380);%3;endchar;").arg(ayaName).arg(ayaNumber).arg(setcolored).arg(codechar);
     m_layout->font->executeMetaPost(data);
-    addedGlyphs.insert(QString("%1%2").arg(ayaName).arg(ayaNumber), data);
+    addedGlyphs[QString("%1%2").arg(ayaName).arg(ayaNumber).toStdString()] = data.toStdString();
     if (colored) {
       data = QString("beginchar(%1.colored%2,-1,-1,5,-1);\n%%beginbody\ngenAyaNumber(%1.colored, %2,380);endchar;").arg(ayaName).arg(ayaNumber);
       m_layout->font->executeMetaPost(data);
-      addedGlyphs.insert(QString("%1.colored%2").arg(ayaName).arg(ayaNumber), data);
+      addedGlyphs[QString("%1.colored%2").arg(ayaName).arg(ayaNumber).toStdString()] = data.toStdString();
     }
   }
 }
@@ -266,7 +266,7 @@ IndoPak::IndoPak(OtLayout* layout, Font* font, bool extended) : Automedina{layou
   };
 
   classes["waqfmarksfina"] = classes["waqfmarks"];
-  classes["waqfmarksfina"].remove("sajda");
+  classes["waqfmarksfina"].erase("sajda");
   classes["waqfmarksaya"] = classes["waqfmarks"];
 
   classes["dotmarks"] = {
@@ -529,7 +529,7 @@ IndoPak::IndoPak(OtLayout* layout, Font* font, bool extended) : Automedina{layou
   layout->expandableGlyphs["kaf.medi.ii.besad"] = {0, 0, 20, 0};
 }
 
-CursiveAnchorFunc IndoPak::getCursiveFunctions(QString functionName, Subtable* subtable) {
+CursiveAnchorFunc IndoPak::getCursiveFunctions(std::string functionName, Subtable* subtable) {
   CursiveAnchorFunc tret;
   if (functionName == "afterrehwaw") {
     return AfterRehWaw(*this, *(MarkBaseSubtable*)(subtable));
@@ -537,7 +537,7 @@ CursiveAnchorFunc IndoPak::getCursiveFunctions(QString functionName, Subtable* s
   return tret;
 }
 
-CalcAnchor IndoPak::getanchorCalcFunctions(QString functionName, Subtable* subtable) {
+CalcAnchor IndoPak::getanchorCalcFunctions(std::string functionName, Subtable* subtable) {
   CalcAnchor tret;
   if (functionName == "defaultmarkabovemark") {
     return Defaultmarkabovemark(*this, *(MarkBaseSubtable*)(subtable));
@@ -565,7 +565,7 @@ CalcAnchor IndoPak::getanchorCalcFunctions(QString functionName, Subtable* subta
   return tret;
 }
 
-Lookup* IndoPak::getLookup(QString lookupName) {
+Lookup* IndoPak::getLookup(std::string lookupName) {
   if (lookupName == "defaultmarkpositioncpp") {
     return defaultmarkposition();
   } else if (lookupName == "waqfmarkpositioning") {
@@ -621,38 +621,34 @@ Lookup* IndoPak::allCursiveJoin(bool rtl) {
   } else {
     lookup->flags = Lookup::Flags::IgnoreMarks;
   }
-  for (auto it = entryAnchorsRTL.constBegin(); it != entryAnchorsRTL.constEnd(); ++it) {
-    QString cursiveName = it.key();
-    auto entries = it.value();
+  for (auto& [cursiveName, entries] : entryAnchorsRTL) {
     auto exits = exitAnchorsRTL[cursiveName];
 
     CursiveSubtable* newsubtable = new CursiveSubtable(lookup);
     lookup->subtables.append(newsubtable);
     newsubtable->name = cursiveName;
 
-    for (auto anchor = entries.constBegin(); anchor != entries.constEnd(); ++anchor) {
-      newsubtable->anchors[anchor.key()].entry = anchor.value();
+    for (auto& [glyphCode, point] : entries) {
+      newsubtable->anchors[glyphCode].entry = point;
     }
 
-    for (auto anchor = exits.constBegin(); anchor != exits.constEnd(); ++anchor) {
-      newsubtable->anchors[anchor.key()].exit = anchor.value();
+    for (auto& [glyphCode, point] : exits) {
+      newsubtable->anchors[glyphCode].exit = point;
     }
   }
-  for (auto it = entryAnchors.constBegin(); it != entryAnchors.constEnd(); ++it) {
-    QString cursiveName = it.key();
-    auto entries = it.value();
+  for (auto& [cursiveName, entries] : entryAnchors) {
     auto exits = exitAnchors[cursiveName];
 
     CursiveSubtable* newsubtable = new CursiveSubtable(lookup);
     lookup->subtables.append(newsubtable);
     newsubtable->name = cursiveName;
 
-    for (auto anchor = entries.constBegin(); anchor != entries.constEnd(); ++anchor) {
-      newsubtable->anchors[anchor.key()].entry = anchor.value();
+    for (auto& [glyphCode, point] : entries) {
+      newsubtable->anchors[glyphCode].entry = point;
     }
 
-    for (auto anchor = exits.constBegin(); anchor != exits.constEnd(); ++anchor) {
-      newsubtable->anchors[anchor.key()].exit = anchor.value();
+    for (auto& [glyphCode, point] : exits) {
+      newsubtable->anchors[glyphCode].exit = point;
     }
   }
   return lookup;
@@ -741,21 +737,19 @@ Lookup* IndoPak::cursivejoin() {
   lookup->type = Lookup::cursive;
   lookup->flags = Lookup::Flags::IgnoreMarks;
 
-  for (auto it = entryAnchors.constBegin(); it != entryAnchors.constEnd(); ++it) {
-    QString cursiveName = it.key();
-    auto entries = it.value();
+  for (auto& [cursiveName, entries] : entryAnchors) {
     auto exits = exitAnchors[cursiveName];
 
     CursiveSubtable* newsubtable = new CursiveSubtable(lookup);
     lookup->subtables.append(newsubtable);
     newsubtable->name = cursiveName;
 
-    for (auto anchor = entries.constBegin(); anchor != entries.constEnd(); ++anchor) {
-      newsubtable->anchors[anchor.key()].entry = anchor.value();
+    for (auto& [glyphCode, point] : entries) {
+      newsubtable->anchors[glyphCode].entry = point;
     }
 
-    for (auto anchor = exits.constBegin(); anchor != exits.constEnd(); ++anchor) {
-      newsubtable->anchors[anchor.key()].exit = anchor.value();
+    for (auto& [glyphCode, point] : exits) {
+      newsubtable->anchors[glyphCode].exit = point;
     }
   }
 
@@ -768,21 +762,19 @@ Lookup* IndoPak::cursivejoinrtl() {
   lookup->type = Lookup::cursive;
   lookup->flags = Lookup::Flags::IgnoreMarks | Lookup::Flags::RightToLeft;
 
-  for (auto it = entryAnchorsRTL.constBegin(); it != entryAnchorsRTL.constEnd(); ++it) {
-    QString cursiveName = it.key();
-    auto entries = it.value();
+  for (auto& [cursiveName, entries] : entryAnchorsRTL) {
     auto exits = exitAnchorsRTL[cursiveName];
 
     CursiveSubtable* newsubtable = new CursiveSubtable(lookup);
     lookup->subtables.append(newsubtable);
     newsubtable->name = cursiveName;
 
-    for (auto anchor = entries.constBegin(); anchor != entries.constEnd(); ++anchor) {
-      newsubtable->anchors[anchor.key()].entry = anchor.value();
+    for (auto& [glyphCode, point] : entries) {
+      newsubtable->anchors[glyphCode].entry = point;
     }
 
-    for (auto anchor = exits.constBegin(); anchor != exits.constEnd(); ++anchor) {
-      newsubtable->anchors[anchor.key()].exit = anchor.value();
+    for (auto& [glyphCode, point] : exits) {
+      newsubtable->anchors[glyphCode].exit = point;
     }
   }
 
@@ -796,23 +788,23 @@ Lookup* IndoPak::defaultmarkposition() {
   lookup->flags = 0;
 
   auto topmarks = classes["topmarks"];
-  topmarks.remove("smallalef.joined");
-  topmarks.remove("smallhighyeh");
-  topmarks.remove("smallhighwaw");
-  topmarks.remove("smallhighnoon");
-  topmarks.remove("roundedfilledhigh");
-  topmarks.remove("hamzaabove");
-  topmarks.remove("hamzaabove.small");
-  topmarks.remove("hamzaabove.joined");
-  topmarks.remove("wasla");
-  topmarks.remove("maddahabove");
-  topmarks.remove("smallhighseen");
-  topmarks.remove("shadda");
-  topmarks.remove("meemiqlab");
+  topmarks.erase("smallalef.joined");
+  topmarks.erase("smallhighyeh");
+  topmarks.erase("smallhighwaw");
+  topmarks.erase("smallhighnoon");
+  topmarks.erase("roundedfilledhigh");
+  topmarks.erase("hamzaabove");
+  topmarks.erase("hamzaabove.small");
+  topmarks.erase("hamzaabove.joined");
+  topmarks.erase("wasla");
+  topmarks.erase("maddahabove");
+  topmarks.erase("smallhighseen");
+  topmarks.erase("shadda");
+  topmarks.erase("meemiqlab");
 
   auto lowmarks = classes["lowmarks"];
-  lowmarks.remove("hamzabelow");
-  lowmarks.remove("hamzaabove.joined");
+  lowmarks.erase("hamzabelow");
+  lowmarks.erase("hamzaabove.joined");
 
   // meem.fina.afterkaf
 
@@ -849,7 +841,7 @@ Lookup* IndoPak::defaultmarkposition() {
   lookup->subtables.append(newsubtable);
   newsubtable->name = "topmarks";
   newsubtable->base = {"bases"};
-  newsubtable->classes["topmarks"].mark = topmarks;
+  newsubtable->classes["topmarks"].mark = toStdStringSet(topmarks);
   newsubtable->classes["topmarks"].basefunction = Defaulbaseanchorfortop(*this, *newsubtable);
   newsubtable->classes["topmarks"].markfunction = Defaultopmarkanchor(*this, *newsubtable);
 
@@ -858,7 +850,7 @@ Lookup* IndoPak::defaultmarkposition() {
   lookup->subtables.append(newsubtable);
   newsubtable->name = "lowmarks";
   newsubtable->base = {"bases"};
-  newsubtable->classes["lowmarks"].mark = lowmarks;
+  newsubtable->classes["lowmarks"].mark = toStdStringSet(lowmarks);
   newsubtable->classes["lowmarks"].basefunction = Defaulbaseanchorforlow(*this, *newsubtable);
   newsubtable->classes["lowmarks"].markfunction = Defaullowmarkanchor(*this, *newsubtable);
 
@@ -1088,10 +1080,10 @@ Lookup* IndoPak::waqfMkmkPositioning() {
     lookup->feature = "";
     lookup->type = Lookup::chainingpos;
     lookup->flags = Lookup::Flags::UseMarkFilteringSet;
-    lookup->markGlyphSetIndex = m_layout->addMarkSet(waqfCodes.toList());
+    lookup->markGlyphSetIndex = m_layout->addMarkSet(QList<std::uint16_t>(waqfCodes.begin(), waqfCodes.end()));
     m_layout->addLookup(lookup);
 
-    QVector<QVector<quint16>> waqfSequences{{}};
+    QVector<QVector<std::uint16_t>> waqfSequences{{}};
 
     for (int i = 1; i <= numMarks; i++) {
       auto tempWaqfSequences = waqfSequences;
@@ -1119,19 +1111,19 @@ Lookup* IndoPak::waqfMkmkPositioning() {
 
       ChainingSubtable* subtable = new ChainingSubtable(lookup);
       lookup->subtables.append(subtable);
-      subtable->name = QString("subtable%1").arg(++subtableNum);
+      subtable->name = asStdString(QString("subtable%1").arg(++subtableNum));
       subtable->compiledRule = ChainingSubtable::CompiledRule();
       subtable->compiledRule.input = {endWordCodes, {seq[0]}};
 
       auto lkernName = QString("lkern%1").arg(subtableNum);
       auto lmarkName = QString("lmark%1").arg(subtableNum);
 
-      subtable->compiledRule.lookupRecords.append({0, lkernName});
-      subtable->compiledRule.lookupRecords.append({1, lmarkName});
+      subtable->compiledRule.lookupRecords.push_back({0, asStdString(lkernName)});
+      subtable->compiledRule.lookupRecords.push_back({1, asStdString(lmarkName)});
 
-      for (quint16 i = 2; i <= numMarks; i++) {
-        subtable->compiledRule.input.append({seq[i - 1]});
-        subtable->compiledRule.lookupRecords.append({i, QString("waqfmkmkpositioning.lmkmk")});
+      for (std::uint16_t i = 2; i <= numMarks; i++) {
+        subtable->compiledRule.input.push_back({seq[i - 1]});
+        subtable->compiledRule.lookupRecords.push_back({i, "waqfmkmkpositioning.lmkmk"});
       }
 
       Lookup* sublookup = new Lookup(m_layout);
@@ -1143,7 +1135,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
       SingleAdjustmentSubtable* singleadjsubtable = new SingleAdjustmentSubtable(sublookup);
       sublookup->subtables.append(singleadjsubtable);
 
-      singleadjsubtable->name = sublookup->name;
+      singleadjsubtable->name = asStdString(sublookup->name);
 
       for (auto endWordCode : endWordCodes) {
         singleadjsubtable->singlePos[endWordCode] = {(qint16)maxWidth, 0, (qint16)maxWidth, 0};
@@ -1193,7 +1185,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
       auto markName = m_layout->glyphNamePerCode[seq[0]];
       markSubtabe->base = {endWordClass};
 
-      markSubtabe->classes["waqfmarksfina"].mark = {markName};
+      markSubtabe->classes["waqfmarksfina"].mark = {markName.toStdString()};
       markSubtabe->classes["waqfmarksfina"].basefunction = basefunction;
       markSubtabe->classes["waqfmarksfina"].markfunction = markfunction;
     }
@@ -1204,41 +1196,41 @@ Lookup* IndoPak::waqfMkmkPositioning() {
   lookup->feature = "mkmk";
   lookup->type = Lookup::chainingpos;
   lookup->flags = Lookup::Flags::UseMarkFilteringSet;
-  lookup->markGlyphSetIndex = m_layout->addMarkSet(waqfCodes.toList());
+  lookup->markGlyphSetIndex = m_layout->addMarkSet(QList<std::uint16_t>(waqfCodes.begin(), waqfCodes.end()));
 
   /*
   auto subtable = new ChainingSubtable(lookup);
   lookup->subtables.append(subtable);
-  subtable->name = QString("waqffina4");
+  subtable->name = "waqffina4";
   subtable->compiledRule = ChainingSubtable::CompiledRule();
   subtable->compiledRule.input = { endWordCodes,waqfCodes,waqfCodes,waqfCodes,waqfCodes };
-  subtable->compiledRule.lookupRecords.append({ 0,QString("l4") });
+  subtable->compiledRule.lookupRecords.push_back({ 0,asStdString(QString("l4") )});
   addLookup(4);
   */
 
   /*
   auto subtable = new ChainingSubtable(lookup);
   lookup->subtables.append(subtable);
-  subtable->name = QString("waqffina3");
+  subtable->name = "waqffina3";
   subtable->compiledRule = ChainingSubtable::CompiledRule();
   subtable->compiledRule.input = { endWordCodes ,waqfCodes ,waqfCodes ,waqfCodes };
-  subtable->compiledRule.lookupRecords.append({ 0,QString("l3") });
+  subtable->compiledRule.lookupRecords.push_back({ 0,asStdString(QString("l3") )});
   addLookup(3);*/
 
   auto subtable = new ChainingSubtable(lookup);
   lookup->subtables.append(subtable);
-  subtable->name = QString("waqffina2");
+  subtable->name = "waqffina2";
   subtable->compiledRule = ChainingSubtable::CompiledRule();
   subtable->compiledRule.input = {endWordCodes, waqfCodes, waqfCodes};
-  subtable->compiledRule.lookupRecords.append({0, QString("l2")});
+  subtable->compiledRule.lookupRecords.push_back({0, "l2"});
   addLookup(2);
 
   subtable = new ChainingSubtable(lookup);
   lookup->subtables.append(subtable);
-  subtable->name = QString("waqffina1");
+  subtable->name = "waqffina1";
   subtable->compiledRule = ChainingSubtable::CompiledRule();
   subtable->compiledRule.input = {endWordCodes, waqfCodes};
-  subtable->compiledRule.lookupRecords.append({0, QString("l1")});
+  subtable->compiledRule.lookupRecords.push_back({0, "l1"});
   addLookup(1);
 
   Lookup* sublookup = new Lookup(m_layout);
@@ -1428,9 +1420,9 @@ Lookup* IndoPak::defaultmarkdotmarks() {
   };
 
   auto topmarks = classes["topmarks"];
-  topmarks.remove("shadda");
+  topmarks.erase("shadda");
 
-  topsubtable->classes["topmarks"].mark = topmarks;
+  topsubtable->classes["topmarks"].mark = toStdStringSet(topmarks);
   topsubtable->classes["topmarks"].basefunction = basetopfunction;
   topsubtable->classes["topmarks"].markfunction = Defaultopmarkanchor(*this, *topsubtable);
 
@@ -1479,7 +1471,7 @@ Lookup* IndoPak::pointmarks() {
   lookup->flags = 0;
 
   for (auto pointmark : classes["dotmarks"]) {
-    QString sublookupName = pointmark;
+    QString sublookupName = QString::fromStdString(pointmark);
 
     Lookup* sublookup = new Lookup(m_layout);
     sublookup->name = lookup->name + "." + sublookupName;
@@ -1492,7 +1484,7 @@ Lookup* IndoPak::pointmarks() {
     MarkBaseSubtable* marksubtable = new MarkBaseSubtable(sublookup);
     sublookup->subtables.append(marksubtable);
 
-    marksubtable->name = sublookup->name;
+    marksubtable->name = asStdString(sublookup->name);
     marksubtable->base = {"bases"};
 
     marksubtable->classes["topmarks"].mark = {"topmarks"};
@@ -1506,15 +1498,15 @@ Lookup* IndoPak::pointmarks() {
     ChainingSubtable* newsubtable = new ChainingSubtable(lookup);
     lookup->subtables.append(newsubtable);
 
-    newsubtable->name = "pointmarks_" + pointmark;
+    newsubtable->name = asStdString("pointmarks_" + sublookupName);
 
     newsubtable->compiledRule = ChainingSubtable::CompiledRule();
 
-    newsubtable->compiledRule.backtrack.append({classtoUnicode("bases")});
-    newsubtable->compiledRule.input.append(QSet{(quint16)glyphs[pointmark].charcode});
-    newsubtable->compiledRule.input.append(classtoUnicode("marks"));
+    newsubtable->compiledRule.backtrack.push_back({classtoUnicode("bases")});
+    newsubtable->compiledRule.input.push_back(std::unordered_set{(std::uint16_t)glyphs[sublookupName].charcode});
+    newsubtable->compiledRule.input.push_back(classtoUnicode("marks"));
 
-    newsubtable->compiledRule.lookupRecords.append({1, sublookupName});
+    newsubtable->compiledRule.lookupRecords.push_back({1, asStdString(sublookupName)});
   }
 
   return lookup;
@@ -1570,7 +1562,7 @@ Lookup* IndoPak::ayanumberskern() {
       SingleAdjustmentSubtable* singleadjsubtable = new SingleAdjustmentSubtable(sublookup);
       sublookup->subtables.append(singleadjsubtable);
 
-      singleadjsubtable->name = sublookup->name;
+      singleadjsubtable->name = asStdString(sublookup->name);
 
       auto& onesglyph = glyphs[getDigitName(ayaNumber)];
       auto position = (short)(ayaGlyph.width / 2 - (onesglyph.width) / 2);
@@ -1585,7 +1577,7 @@ Lookup* IndoPak::ayanumberskern() {
       subtable->name = singleadjsubtable->name;
       subtable->compiledRule = ChainingSubtable::CompiledRule();
       subtable->compiledRule.input = {{(uint16_t)ayaGlyph.charcode}, {(uint16_t)onesglyph.charcode}};
-      subtable->compiledRule.lookupRecords.append({1, QString("l%1").arg(ayaNumber)});
+      subtable->compiledRule.lookupRecords.push_back({1, asStdString(QString("l%1").arg(ayaNumber))});
 
     } else if (ayaNumber < 100) {
       int onesdigit = ayaNumber % 10;
@@ -1600,7 +1592,7 @@ Lookup* IndoPak::ayanumberskern() {
       SingleAdjustmentSubtable* singleadjsubtable1 = new SingleAdjustmentSubtable(sublookup1);
       sublookup1->subtables.append(singleadjsubtable1);
 
-      singleadjsubtable1->name = sublookup1->name;
+      singleadjsubtable1->name = asStdString(sublookup1->name);
 
       Lookup* sublookup2 = new Lookup(m_layout);
       sublookup2->name = QString("ayanumberskern.l%1.2").arg(ayaNumber);
@@ -1611,7 +1603,7 @@ Lookup* IndoPak::ayanumberskern() {
       SingleAdjustmentSubtable* singleadjsubtable2 = new SingleAdjustmentSubtable(sublookup2);
       sublookup2->subtables.append(singleadjsubtable2);
 
-      singleadjsubtable2->name = sublookup2->name;
+      singleadjsubtable2->name = asStdString(sublookup2->name);
 
       auto& onesglyph = glyphs[getDigitName(onesdigit)];
       auto& tensglyph = glyphs[getDigitName(tensdigit)];
@@ -1627,11 +1619,11 @@ Lookup* IndoPak::ayanumberskern() {
 
       ChainingSubtable* subtable = new ChainingSubtable(lookup);
       lookup->subtables.append(subtable);
-      subtable->name = QString("ayanumberskern.l%1").arg(ayaNumber);
+      subtable->name = asStdString(QString("ayanumberskern.l%1").arg(ayaNumber));
       subtable->compiledRule = ChainingSubtable::CompiledRule();
       subtable->compiledRule.input = {{(uint16_t)ayaGlyph.charcode}, {(uint16_t)tensglyph.charcode}, {(uint16_t)onesglyph.charcode}};
-      subtable->compiledRule.lookupRecords.append({1, QString("l%1.2").arg(ayaNumber)});
-      subtable->compiledRule.lookupRecords.append({2, QString("l%1.1").arg(ayaNumber)});
+      subtable->compiledRule.lookupRecords.push_back({1, asStdString(QString("l%1.2").arg(ayaNumber))});
+      subtable->compiledRule.lookupRecords.push_back({2, asStdString(QString("l%1.1").arg(ayaNumber))});
 
     } else {
       Lookup* sublookup1 = new Lookup(m_layout);
@@ -1641,7 +1633,7 @@ Lookup* IndoPak::ayanumberskern() {
       m_layout->addLookup(sublookup1);
       SingleAdjustmentSubtable* singleadjsubtable1 = new SingleAdjustmentSubtable(sublookup1);
       sublookup1->subtables.append(singleadjsubtable1);
-      singleadjsubtable1->name = sublookup1->name;
+      singleadjsubtable1->name = asStdString(sublookup1->name);
 
       Lookup* sublookup2 = new Lookup(m_layout);
       sublookup2->name = QString("ayanumberskern.l%1.2").arg(ayaNumber);
@@ -1650,7 +1642,7 @@ Lookup* IndoPak::ayanumberskern() {
       m_layout->addLookup(sublookup2);
       SingleAdjustmentSubtable* singleadjsubtable2 = new SingleAdjustmentSubtable(sublookup2);
       sublookup2->subtables.append(singleadjsubtable2);
-      singleadjsubtable2->name = sublookup2->name;
+      singleadjsubtable2->name = asStdString(sublookup2->name);
 
       Lookup* sublookup3 = new Lookup(m_layout);
       sublookup3->name = QString("ayanumberskern.l%1.3").arg(ayaNumber);
@@ -1659,7 +1651,7 @@ Lookup* IndoPak::ayanumberskern() {
       m_layout->addLookup(sublookup3);
       SingleAdjustmentSubtable* singleadjsubtable3 = new SingleAdjustmentSubtable(sublookup3);
       sublookup3->subtables.append(singleadjsubtable3);
-      singleadjsubtable3->name = sublookup3->name;
+      singleadjsubtable3->name = asStdString(sublookup3->name);
 
       int onesdigit = ayaNumber % 10;
       int tensdigit = (ayaNumber / 10) % 10;
@@ -1681,12 +1673,12 @@ Lookup* IndoPak::ayanumberskern() {
 
       ChainingSubtable* subtable = new ChainingSubtable(lookup);
       lookup->subtables.append(subtable);
-      subtable->name = QString("ayanumberskern.l%1").arg(ayaNumber);
+      subtable->name = asStdString(QString("ayanumberskern.l%1").arg(ayaNumber));
       subtable->compiledRule = ChainingSubtable::CompiledRule();
       subtable->compiledRule.input = {{(uint16_t)ayaGlyph.charcode}, {(uint16_t)hundredsglyph.charcode}, {(uint16_t)tensglyph.charcode}, {(uint16_t)onesglyph.charcode}};
-      subtable->compiledRule.lookupRecords.append({1, QString("l%1.3").arg(ayaNumber)});
-      subtable->compiledRule.lookupRecords.append({2, QString("l%1.2").arg(ayaNumber)});
-      subtable->compiledRule.lookupRecords.append({3, QString("l%1.1").arg(ayaNumber)});
+      subtable->compiledRule.lookupRecords.push_back({1, asStdString(QString("l%1.3").arg(ayaNumber))});
+      subtable->compiledRule.lookupRecords.push_back({2, asStdString(QString("l%1.2").arg(ayaNumber))});
+      subtable->compiledRule.lookupRecords.push_back({3, asStdString(QString("l%1.1").arg(ayaNumber))});
     }
   }
 
@@ -1712,7 +1704,7 @@ Lookup* IndoPak::ayanumberskern() {
   SingleAdjustmentSubtable* singleadjsubtable = new SingleAdjustmentSubtable(sublookup);
   sublookup->subtables.append(singleadjsubtable);
 
-  singleadjsubtable->name = sublookup->name;
+  singleadjsubtable->name = asStdString(sublookup->name);
 
   for (auto digit : digitySet) {
         auto& onesglyph = glyphs[m_layout->glyphNamePerCode.value(digit)];
@@ -1730,7 +1722,7 @@ Lookup* IndoPak::ayanumberskern() {
   singleadjsubtable = new SingleAdjustmentSubtable(sublookup);
   sublookup->subtables.append(singleadjsubtable);
 
-  singleadjsubtable->name = sublookup->name;
+  singleadjsubtable->name = asStdString(sublookup->name);
 
   for (auto digit : digitySet) {
         singleadjsubtable->singlePos[digit] = { 500,yoffset,0,0 };
@@ -1746,7 +1738,7 @@ Lookup* IndoPak::ayanumberskern() {
   singleadjsubtable = new SingleAdjustmentSubtable(sublookup);
   sublookup->subtables.append(singleadjsubtable);
 
-  singleadjsubtable->name = sublookup->name;
+  singleadjsubtable->name = asStdString(sublookup->name);
 
   for (auto digit : digitySet) {
         auto& onesglyph = glyphs[m_layout->glyphNamePerCode.value(digit)];
@@ -1765,7 +1757,7 @@ Lookup* IndoPak::ayanumberskern() {
   singleadjsubtable = new SingleAdjustmentSubtable(sublookup);
   sublookup->subtables.append(singleadjsubtable);
 
-  singleadjsubtable->name = sublookup->name;
+  singleadjsubtable->name = asStdString(sublookup->name);
 
   for (auto digit : digitySet) {
         singleadjsubtable->singlePos[digit] = { 0,yoffset,0,0 };
@@ -1784,7 +1776,7 @@ Lookup* IndoPak::ayanumberskern() {
   lookup->feature = "kern";
   lookup->type = Lookup::chainingpos;
   lookup->flags = 0;
-  //lookup->markGlyphSetIndex = m_layout->addMarkSet({ (quint16)glyphs["smallalef"].charcode });
+  //lookup->markGlyphSetIndex = m_layout->addMarkSet({ (std::uint16_t)glyphs["smallalef"].charcode });
   //lookup->flags = lookup->flags | Lookup::Flags::IgnoreMarks;
 
 
@@ -1796,9 +1788,9 @@ Lookup* IndoPak::ayanumberskern() {
   subtable->compiledRule = ChainingSubtable::CompiledRule();
   //subtable->compiledRule.backtrack = {{(int16_t)ayaGlyph.charcode}};
   subtable->compiledRule.input = { {(uint16_t)ayaGlyph.charcode}, digitySet,digitySet,digitySet };
-  subtable->compiledRule.lookupRecords.append({ 1,"l1" });
-  subtable->compiledRule.lookupRecords.append({ 2,"l1" });
-  subtable->compiledRule.lookupRecords.append({ 3,"l1" });
+  subtable->compiledRule.lookupRecords.push_back({ 1,"l1"});
+  subtable->compiledRule.lookupRecords.push_back({ 2,"l1"});
+  subtable->compiledRule.lookupRecords.push_back({ 3,"l1"});
 
   subtable = new ChainingSubtable(lookup);
   lookup->subtables.append(subtable);
@@ -1806,16 +1798,16 @@ Lookup* IndoPak::ayanumberskern() {
   //subtable->compiledRule.backtrack = {{(int16_t)ayaGlyph.charcode}};
   subtable->compiledRule = ChainingSubtable::CompiledRule();
   subtable->compiledRule.input = { {(uint16_t)ayaGlyph.charcode}, digitySet,digitySet };
-  subtable->compiledRule.lookupRecords.append({ 1,"l2" });
-  subtable->compiledRule.lookupRecords.append({ 2,"l2" });
+  subtable->compiledRule.lookupRecords.push_back({ 1,"l2"});
+  subtable->compiledRule.lookupRecords.push_back({ 2,"l2"});
 
   subtable = new ChainingSubtable(lookup);
   lookup->subtables.append(subtable);
   subtable->name = "ayanumbers1digit";
-  //subtable->compiledRule.backtrack = {{(quint16)ayaGlyph.charcode}};
+  //subtable->compiledRule.backtrack = {{(std::uint16_t)ayaGlyph.charcode}};
   subtable->compiledRule = ChainingSubtable::CompiledRule();
   subtable->compiledRule.input = { {(uint16_t)ayaGlyph.charcode}, digitySet };
-  subtable->compiledRule.lookupRecords.append({ 1,"l3" });
+  subtable->compiledRule.lookupRecords.push_back({ 1,"l3"});
 
   return lookup;
 
@@ -1825,7 +1817,7 @@ Lookup* IndoPak::ayanumberskern() {
 Lookup* IndoPak::ayanumbers() {
   QString ayaName = "endofaya";
 
-  quint16 endofaya = m_layout->glyphCodePerName[ayaName];
+  std::uint16_t endofaya = m_layout->glyphCodePerName[ayaName];
 
   // ligature
   Lookup* ligature = new Lookup(m_layout);
@@ -1836,19 +1828,19 @@ Lookup* IndoPak::ayanumbers() {
 
   LigatureSubtable* ligaturesubtable = new LigatureSubtable(ligature);
   ligature->subtables.append(ligaturesubtable);
-  ligaturesubtable->name = ligature->name;
+  ligaturesubtable->name = asStdString(ligature->name);
 
-  for (quint16 i = 286; i > 99; i--) {
-    quint16 code = m_layout->glyphCodePerName[QString("%1%2").arg(ayaName).arg(i)];
+  for (std::uint16_t i = 286; i > 99; i--) {
+    std::uint16_t code = m_layout->glyphCodePerName[QString("%1%2").arg(ayaName).arg(i)];
 
     int onesdigit = i % 10;
     int tensdigit = (i / 10) % 10;
     int hundredsdigit = i / 100;
     if (extended) {
-      ligaturesubtable->ligatures.append({code, {endofaya, (quint16)(m_layout->unicodeToGlyphCode.value(1632 + hundredsdigit)), (quint16)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (quint16)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit))}});
+      ligaturesubtable->ligatures.push_back({code, {endofaya, (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + hundredsdigit)), (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit))}});
     } else {
-      ligaturesubtable->ligatures.append({code, {(quint16)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit)), (quint16)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (quint16)(m_layout->unicodeToGlyphCode.value(1632 + hundredsdigit)), endofaya}});
-      ligaturesubtable->ligatures.append({code, {endofaya, (quint16)(m_layout->unicodeToGlyphCode.value(1632 + hundredsdigit)), (quint16)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (quint16)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit))}});
+      ligaturesubtable->ligatures.push_back({code, {(std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit)), (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + hundredsdigit)), endofaya}});
+      ligaturesubtable->ligatures.push_back({code, {endofaya, (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + hundredsdigit)), (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit))}});
     }
   }
 
@@ -1861,17 +1853,17 @@ Lookup* IndoPak::ayanumbers() {
 
   ligaturesubtable = new LigatureSubtable(ligature);
   ligature->subtables.append(ligaturesubtable);
-  ligaturesubtable->name = ligature->name;
+  ligaturesubtable->name = asStdString(ligature->name);
 
-  for (quint16 i = 99; i > 9; i--) {
-    quint16 code = m_layout->glyphCodePerName[QString("%1%2").arg(ayaName).arg(i)];
+  for (std::uint16_t i = 99; i > 9; i--) {
+    std::uint16_t code = m_layout->glyphCodePerName[QString("%1%2").arg(ayaName).arg(i)];
     int onesdigit = i % 10;
     int tensdigit = i / 10;
     if (extended) {
-      ligaturesubtable->ligatures.append({code, {endofaya, (quint16)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (quint16)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit))}});
+      ligaturesubtable->ligatures.push_back({code, {endofaya, (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit))}});
     } else {
-      ligaturesubtable->ligatures.append({code, {(quint16)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit)), (quint16)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), endofaya}});
-      ligaturesubtable->ligatures.append({code, {endofaya, (quint16)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (quint16)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit))}});
+      ligaturesubtable->ligatures.push_back({code, {(std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit)), (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), endofaya}});
+      ligaturesubtable->ligatures.push_back({code, {endofaya, (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + tensdigit)), (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + onesdigit))}});
     }
   }
 
@@ -1884,12 +1876,12 @@ Lookup* IndoPak::ayanumbers() {
 
   ligaturesubtable = new LigatureSubtable(ligature);
   ligature->subtables.append(ligaturesubtable);
-  ligaturesubtable->name = ligature->name;
+  ligaturesubtable->name = asStdString(ligature->name);
 
   for (int i = 1; i < 10; i++) {
-    quint16 code = m_layout->glyphCodePerName[QString("%1%2").arg(ayaName).arg(i)];
-    ligaturesubtable->ligatures.append({code, {endofaya, (quint16)(m_layout->unicodeToGlyphCode.value(1632 + i))}});
-    ligaturesubtable->ligatures.append({code, {(quint16)(m_layout->unicodeToGlyphCode.value(1632 + i)), endofaya}});
+    std::uint16_t code = m_layout->glyphCodePerName[QString("%1%2").arg(ayaName).arg(i)];
+    ligaturesubtable->ligatures.push_back({code, {endofaya, (std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + i))}});
+    ligaturesubtable->ligatures.push_back({code, {(std::uint16_t)(m_layout->unicodeToGlyphCode.value(1632 + i)), endofaya}});
   }
 
   // main lokkup
@@ -1916,7 +1908,7 @@ Lookup* IndoPak::ayanumbers() {
     subtable->compiledRule.input = {digitySetplusendofaya, digitySet, digitySet, digitySetplusendofaya};
   }
 
-  subtable->compiledRule.lookupRecords.append({0, "l1"});
+  subtable->compiledRule.lookupRecords.push_back({0, "l1"});
 
   subtable = new ChainingSubtable(lookup);
   lookup->subtables.append(subtable);
@@ -1927,7 +1919,7 @@ Lookup* IndoPak::ayanumbers() {
   } else {
     subtable->compiledRule.input = {digitySetplusendofaya, digitySet, digitySetplusendofaya};
   }
-  subtable->compiledRule.lookupRecords.append({0, "l2"});
+  subtable->compiledRule.lookupRecords.push_back({0, "l2"});
 
   subtable = new ChainingSubtable(lookup);
   lookup->subtables.append(subtable);
@@ -1938,7 +1930,7 @@ Lookup* IndoPak::ayanumbers() {
   } else {
     subtable->compiledRule.input = {digitySetplusendofaya, digitySetplusendofaya};
   }
-  subtable->compiledRule.lookupRecords.append({0, "l3"});
+  subtable->compiledRule.lookupRecords.push_back({0, "l3"});
 
   return lookup;
 }
@@ -1951,18 +1943,18 @@ Lookup* IndoPak::forheh() {
 
   SingleSubtable* singlesubtable = new SingleSubtable(single);
   single->subtables.append(singlesubtable);
-  singlesubtable->name = single->name;
+  singlesubtable->name = asStdString(single->name);
 
   for (auto& glyph : glyphs) {
     if (classes["haslefttatweel"].contains(glyph.name)) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(glyph.name).arg((int)((glyph.charlt + 2) * 100));
+      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)((glyph.charlt + 2) * 100));
       if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
       }
-    } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.contains("pluslt")) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(glyph.originalglyph).arg((int)((glyph.charlt + 2) * 100));
+    } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
+      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt + 2) * 100));
       if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
       }
     }
   }
@@ -1980,15 +1972,15 @@ Lookup* IndoPak::forheh() {
 
   newsubtable->compiledRule = ChainingSubtable::CompiledRule();
 
-  auto keys = singlesubtable->subst.keys();
-  if (!keys.isEmpty()) {
-    newsubtable->compiledRule.input.append(QSet(keys.begin(), keys.end()));
+  auto keys = stdMapKeys(singlesubtable->subst);
+  if (!keys.empty()) {
+    newsubtable->compiledRule.input.push_back(std::unordered_set(keys.begin(), keys.end()));
   }
 
-  // newsubtable->compiledRule.input.append({ (quint16)glyphs["heh.medi"].charcode,(quint16)glyphs["heh.medi.forsmalllalef"].charcode });
-  newsubtable->compiledRule.lookahead.append(classtoUnicode("^heh.medi"));  //  { (quint16)glyphs["heh.medi"].charcode });
+  // newsubtable->compiledRule.input.push_back({ (std::uint16_t)glyphs["heh.medi"].charcode,(std::uint16_t)glyphs["heh.medi.forsmalllalef"].charcode });
+  newsubtable->compiledRule.lookahead.push_back(classtoUnicode("^heh.medi"));  //  { (std::uint16_t)glyphs["heh.medi"].charcode });
 
-  newsubtable->compiledRule.lookupRecords.append({0, "l1"});
+  newsubtable->compiledRule.lookupRecords.push_back({0, "l1"});
 
   return lookup;
 }
@@ -2002,20 +1994,20 @@ Lookup* IndoPak::forhamza() {
 
   SingleSubtable* singlesubtable = new SingleSubtable(single);
   single->subtables.append(singlesubtable);
-  singlesubtable->name = single->name;
+  singlesubtable->name = asStdString(single->name);
 
   int tatweel = 2;
 
   for (auto& glyph : glyphs) {
     if (classes["haslefttatweel"].contains(glyph.name)) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(glyph.name).arg((int)((glyph.charlt + tatweel) * 100));
+      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)((glyph.charlt + tatweel) * 100));
       if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
       }
-    } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.contains("pluslt")) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(glyph.originalglyph).arg((int)((glyph.charlt + tatweel) * 100));
+    } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
+      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt + tatweel) * 100));
       if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
       }
     }
   }
@@ -2025,34 +2017,34 @@ Lookup* IndoPak::forhamza() {
   ligature->name = "forhamza.l2";
   ligature->feature = "";
   ligature->type = Lookup::ligature;
-  // ligature->markGlyphSetIndex = m_layout->addMarkSet({ (quint16)glyphs["hamzaabove"].charcode,(quint16)glyphs["smallhighyeh"].charcode,(quint16)glyphs["smallhighwaw"].charcode ,(quint16)glyphs["smallhighnoon"].charcode });
+  // ligature->markGlyphSetIndex = m_layout->addMarkSet({ (std::uint16_t)glyphs["hamzaabove"].charcode,(std::uint16_t)glyphs["smallhighyeh"].charcode,(std::uint16_t)glyphs["smallhighwaw"].charcode ,(std::uint16_t)glyphs["smallhighnoon"].charcode });
   // ligature->flags = ligature->flags | Lookup::Flags::UseMarkFilteringSet;
   m_layout->addLookup(ligature);
 
   LigatureSubtable* ligaturesubtable = new LigatureSubtable(ligature);
   ligature->subtables.append(ligaturesubtable);
-  ligaturesubtable->name = ligature->name;
+  ligaturesubtable->name = asStdString(ligature->name);
 
-  ligaturesubtable->ligatures.append({(quint16)glyphs["hamzaabove"].charcode, {(quint16)glyphs["hamzaabove"].charcode, 0x200D}});
-  ligaturesubtable->ligatures.append({(quint16)glyphs["hamzaabove.joined"].charcode, {0x200D, (quint16)glyphs["hamzaabove"].charcode}});
-  ligaturesubtable->ligatures.append({(quint16)glyphs["hamzaabove.joined"].charcode, {(quint16)glyphs["tatweel"].charcode, (quint16)glyphs["hamzaabove"].charcode}});
-  ligaturesubtable->ligatures.append({(quint16)glyphs["smallhighyeh"].charcode, {0x200D, (quint16)glyphs["smallhighyeh"].charcode}});
-  ligaturesubtable->ligatures.append({(quint16)glyphs["smallhighyeh"].charcode, {(quint16)glyphs["tatweel"].charcode, (quint16)glyphs["smallhighyeh"].charcode}});
-  // ligaturesubtable->ligatures.append({ (quint16)glyphs["smallhighwaw"].charcode,{ 0x200D,(quint16)glyphs["smallhighwaw"].charcode } });
-  // ligaturesubtable->ligatures.append({ (quint16)glyphs["smallhighwaw"].charcode,{ (quint16)glyphs["tatweel"].charcode,(quint16)glyphs["smallhighwaw"].charcode } });
+  ligaturesubtable->ligatures.push_back({(std::uint16_t)glyphs["hamzaabove"].charcode, {(std::uint16_t)glyphs["hamzaabove"].charcode, 0x200D}});
+  ligaturesubtable->ligatures.push_back({(std::uint16_t)glyphs["hamzaabove.joined"].charcode, {0x200D, (std::uint16_t)glyphs["hamzaabove"].charcode}});
+  ligaturesubtable->ligatures.push_back({(std::uint16_t)glyphs["hamzaabove.joined"].charcode, {(std::uint16_t)glyphs["tatweel"].charcode, (std::uint16_t)glyphs["hamzaabove"].charcode}});
+  ligaturesubtable->ligatures.push_back({(std::uint16_t)glyphs["smallhighyeh"].charcode, {0x200D, (std::uint16_t)glyphs["smallhighyeh"].charcode}});
+  ligaturesubtable->ligatures.push_back({(std::uint16_t)glyphs["smallhighyeh"].charcode, {(std::uint16_t)glyphs["tatweel"].charcode, (std::uint16_t)glyphs["smallhighyeh"].charcode}});
+  // ligaturesubtable->ligatures.push_back({ (std::uint16_t)glyphs["smallhighwaw"].charcode,{ 0x200D,(std::uint16_t)glyphs["smallhighwaw"].charcode } });
+  // ligaturesubtable->ligatures.push_back({ (std::uint16_t)glyphs["smallhighwaw"].charcode,{ (std::uint16_t)glyphs["tatweel"].charcode,(std::uint16_t)glyphs["smallhighwaw"].charcode } });
 
-  ligaturesubtable->ligatures.append({(quint16)glyphs["smallhighnoon"].charcode, {0x200D, (quint16)glyphs["smallhighnoon"].charcode}});
-  ligaturesubtable->ligatures.append({(quint16)glyphs["smallhighnoon"].charcode, {(quint16)glyphs["tatweel"].charcode, (quint16)glyphs["smallhighnoon"].charcode}});
+  ligaturesubtable->ligatures.push_back({(std::uint16_t)glyphs["smallhighnoon"].charcode, {0x200D, (std::uint16_t)glyphs["smallhighnoon"].charcode}});
+  ligaturesubtable->ligatures.push_back({(std::uint16_t)glyphs["smallhighnoon"].charcode, {(std::uint16_t)glyphs["tatweel"].charcode, (std::uint16_t)glyphs["smallhighnoon"].charcode}});
 
   Lookup* lookup = new Lookup(m_layout);
   lookup->name = "forhamza";
   lookup->feature = "rlig";
   lookup->type = Lookup::chainingsub;
-  lookup->markGlyphSetIndex = m_layout->addMarkSet({//(quint16)glyphs["smallhighwaw"].charcode,
-                                                    (quint16)glyphs["hamzaabove"].charcode,
-                                                    (quint16)glyphs["smallhighyeh"].charcode,
-                                                    (quint16)glyphs["smallhighnoon"].charcode,
-                                                    (quint16)glyphs["roundedfilledhigh"].charcode});
+  lookup->markGlyphSetIndex = m_layout->addMarkSet({//(std::uint16_t)glyphs["smallhighwaw"].charcode,
+                                                    (std::uint16_t)glyphs["hamzaabove"].charcode,
+                                                    (std::uint16_t)glyphs["smallhighyeh"].charcode,
+                                                    (std::uint16_t)glyphs["smallhighnoon"].charcode,
+                                                    (std::uint16_t)glyphs["roundedfilledhigh"].charcode});
   lookup->flags = lookup->flags | Lookup::Flags::UseMarkFilteringSet;
   // lookup->flags = lookup->flags | Lookup::Flags::IgnoreMarks;
 
@@ -2063,17 +2055,17 @@ Lookup* IndoPak::forhamza() {
 
   newsubtable->compiledRule = ChainingSubtable::CompiledRule();
 
-  // newsubtable->compiledRule.input.append(singlesubtable->subst.keys().toSet());
-  auto keys = singlesubtable->subst.keys();
-  if (!keys.isEmpty()) {
-    newsubtable->compiledRule.input.append(QSet(keys.begin(), keys.end()));
+  // newsubtable->compiledRule.input.push_back(stdMapKeys(singlesubtable->subst).toSet());
+  auto keys = stdMapKeys(singlesubtable->subst);
+  if (!keys.empty()) {
+    newsubtable->compiledRule.input.push_back(std::unordered_set(keys.begin(), keys.end()));
   }
 
-  newsubtable->compiledRule.input.append({0x200D, (quint16)glyphs["tatweel"].charcode});
-  newsubtable->compiledRule.input.append({(quint16)glyphs["hamzaabove"].charcode, (quint16)glyphs["smallhighyeh"].charcode, (quint16)glyphs["smallhighnoon"].charcode});
+  newsubtable->compiledRule.input.push_back({0x200D, (std::uint16_t)glyphs["tatweel"].charcode});
+  newsubtable->compiledRule.input.push_back({(std::uint16_t)glyphs["hamzaabove"].charcode, (std::uint16_t)glyphs["smallhighyeh"].charcode, (std::uint16_t)glyphs["smallhighnoon"].charcode});
 
-  newsubtable->compiledRule.lookupRecords.append({0, "l1"});
-  newsubtable->compiledRule.lookupRecords.append({1, "l2"});
+  newsubtable->compiledRule.lookupRecords.push_back({0, "l1"});
+  newsubtable->compiledRule.lookupRecords.push_back({1, "l2"});
 
   // roundedfilledhigh
   newsubtable = new ChainingSubtable(lookup);
@@ -2083,17 +2075,17 @@ Lookup* IndoPak::forhamza() {
 
   newsubtable->compiledRule = ChainingSubtable::CompiledRule();
 
-  // newsubtable->compiledRule.input.append(singlesubtable->subst.keys().toSet());
-  keys = singlesubtable->subst.keys();
-  if (!keys.isEmpty()) {
-    newsubtable->compiledRule.input.append(QSet(keys.begin(), keys.end()));
+  // newsubtable->compiledRule.input.push_back(stdMapKeys(singlesubtable->subst).toSet());
+  keys = stdMapKeys(singlesubtable->subst);
+  if (!keys.empty()) {
+    newsubtable->compiledRule.input.push_back(std::unordered_set(keys.begin(), keys.end()));
   }
 
-  newsubtable->compiledRule.input.append(QSet{
-      (quint16)glyphs["roundedfilledhigh"].charcode,
+  newsubtable->compiledRule.input.push_back(std::unordered_set{
+      (std::uint16_t)glyphs["roundedfilledhigh"].charcode,
   });
 
-  newsubtable->compiledRule.lookupRecords.append({0, "l1"});
+  newsubtable->compiledRule.lookupRecords.push_back({0, "l1"});
 
   return lookup;
 }
@@ -2128,26 +2120,26 @@ Lookup* IndoPak::shrinkstretchlt(float lt, QString featureName) {
 
   SingleSubtable* singlesubtable = new SingleSubtable(single);
   single->subtables.append(singlesubtable);
-  singlesubtable->name = single->name;
+  singlesubtable->name = asStdString(single->name);
 
   for (auto& glyph : glyphs) {
     // QRegularExpression reg2("beginchar\\((.*?),(.*?),(.*?),(.*?)\\);");
     QRegularExpression regname("(.*)[.](minuslt|pluslt)_(.*)");
-    QRegularExpressionMatch match = regname.match(glyph.name);
+    QRegularExpressionMatch match = regname.match(QString::fromStdString(glyph.name));
     if (match.hasMatch()) {
       QString name = match.captured(1);
       QString plusminus = match.captured(2);
       int value = match.captured(3).toInt();
     } else if (classes["haslefttatweel"].contains(glyph.name)) {
       if (lt < 0) {
-        QString destName = QStringLiteral("%1.minuslt_%2").arg(glyph.name).arg((int)(lt * -100));
+        QString destName = QStringLiteral("%1.minuslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)(lt * -100));
         if (glyphs.contains(destName)) {
-          singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+          singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
         }
       } else {
-        QString destName = QStringLiteral("%1.pluslt_%2").arg(glyph.name).arg((int)(lt * 100));
+        QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)(lt * 100));
         if (glyphs.contains(destName)) {
-          singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+          singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
         }
       }
     }
@@ -2157,15 +2149,15 @@ Lookup* IndoPak::shrinkstretchlt(float lt, QString featureName) {
                                             double w2 = match.captured(2).toDouble();
 
                             if (classes["haslefttatweel"].contains(glyph.name)) {
-                                            QString destName = QStringLiteral("%1.minuslt_%2").arg(glyph.name).arg((int)(lt * 100));
+                                            QString destName = QStringLiteral("%1.minuslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)(lt * 100));
                                             if (glyphs.contains(destName)) {
-                                                            singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+                                                            singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
                                             }
                             }
-                            else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.contains("pluslt")) {
-                                            QString destName = QStringLiteral("%1.pluslt_%2").arg(glyph.originalglyph).arg((int)((glyph.charlt - shrink) * 100));
+                            else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
+                                            QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt - shrink) * 100));
                                             if (glyphs.contains(destName)) {
-                                                            singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+                                                            singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
                                             }
                             }*/
   }
@@ -2179,17 +2171,17 @@ Lookup* IndoPak::shrinkstretchlt(float lt, QString featureName) {
   ChainingSubtable* newsubtable = new ChainingSubtable(lookup);
   lookup->subtables.append(newsubtable);
 
-  newsubtable->name = lookupName;
+  newsubtable->name = asStdString(lookupName);
 
   newsubtable->compiledRule = ChainingSubtable::CompiledRule();
 
-  // newsubtable->compiledRule.input.append(singlesubtable->subst.keys().toSet());
-  auto keys = singlesubtable->subst.keys();
-  if (!keys.isEmpty()) {
-    newsubtable->compiledRule.input.append(QSet(keys.begin(), keys.end()));
+  // newsubtable->compiledRule.input.push_back(stdMapKeys(singlesubtable->subst).toSet());
+  auto keys = stdMapKeys(singlesubtable->subst);
+  if (!keys.empty()) {
+    newsubtable->compiledRule.input.push_back(std::unordered_set(keys.begin(), keys.end()));
   }
 
-  newsubtable->compiledRule.lookupRecords.append({0, "l1"});
+  newsubtable->compiledRule.lookupRecords.push_back({0, "l1"});
 
   return lookup;
 }
@@ -2205,18 +2197,18 @@ Lookup* IndoPak::forsmallhighwaw() {
 
   SingleSubtable* singlesubtable = new SingleSubtable(single);
   single->subtables.append(singlesubtable);
-  singlesubtable->name = single->name;
+  singlesubtable->name = asStdString(single->name);
 
   for (auto& glyph : glyphs) {
     if (classes["haslefttatweel"].contains(glyph.name)) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(glyph.name).arg((int)((glyph.charlt + tatweel) * 100));
+      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)((glyph.charlt + tatweel) * 100));
       if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
       }
-    } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.contains("pluslt")) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(glyph.originalglyph).arg((int)((glyph.charlt + tatweel) * 100));
+    } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
+      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt + tatweel) * 100));
       if (glyphs.contains(destName)) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
+        singlesubtable->subst[glyphs[QString::fromStdString(glyph.name)].charcode] = glyphs[destName].charcode;
       }
     }
   }
@@ -2230,16 +2222,16 @@ Lookup* IndoPak::forsmallhighwaw() {
 
   LigatureSubtable* ligaturesubtable = new LigatureSubtable(ligature);
   ligature->subtables.append(ligaturesubtable);
-  ligaturesubtable->name = ligature->name;
+  ligaturesubtable->name = asStdString(ligature->name);
 
-  ligaturesubtable->ligatures.append({(quint16)glyphs["smallhighwaw"].charcode, {0x034F, (quint16)glyphs["smallhighwaw"].charcode}});
+  ligaturesubtable->ligatures.push_back({(std::uint16_t)glyphs["smallhighwaw"].charcode, {0x034F, (std::uint16_t)glyphs["smallhighwaw"].charcode}});
 
   // main lookup
   Lookup* lookup = new Lookup(m_layout);
   lookup->name = "forsmallhighwaw";
   lookup->feature = "rlig";
   lookup->type = Lookup::chainingsub;
-  lookup->markGlyphSetIndex = m_layout->addMarkSet(QList{(quint16)glyphs["smallhighwaw"].charcode});
+  lookup->markGlyphSetIndex = m_layout->addMarkSet(QList{(std::uint16_t)glyphs["smallhighwaw"].charcode});
   lookup->flags = lookup->flags | Lookup::Flags::UseMarkFilteringSet;
 
   // forsmallalefwithmaddah
@@ -2250,16 +2242,16 @@ Lookup* IndoPak::forsmallhighwaw() {
 
   newsubtable->compiledRule = ChainingSubtable::CompiledRule();
 
-  // newsubtable->compiledRule.input.append(singlesubtable->subst.keys().toSet());
-  auto keys = singlesubtable->subst.keys();
-  if (!keys.isEmpty()) {
-    newsubtable->compiledRule.input.append(QSet(keys.begin(), keys.end()));
+  // newsubtable->compiledRule.input.push_back(stdMapKeys(singlesubtable->subst).toSet());
+  auto keys = stdMapKeys(singlesubtable->subst);
+  if (!keys.empty()) {
+    newsubtable->compiledRule.input.push_back(std::unordered_set(keys.begin(), keys.end()));
   }
-  newsubtable->compiledRule.input.append(QSet{(quint16)0x034F});
-  newsubtable->compiledRule.input.append(QSet{(quint16)glyphs["smallhighwaw"].charcode});
+  newsubtable->compiledRule.input.push_back(std::unordered_set{(std::uint16_t)0x034F});
+  newsubtable->compiledRule.input.push_back(std::unordered_set{(std::uint16_t)glyphs["smallhighwaw"].charcode});
 
-  newsubtable->compiledRule.lookupRecords.append({0, "l1"});
-  newsubtable->compiledRule.lookupRecords.append({1, "l2"});
+  newsubtable->compiledRule.lookupRecords.push_back({0, "l1"});
+  newsubtable->compiledRule.lookupRecords.push_back({1, "l2"});
 
   return lookup;
 }
@@ -2267,7 +2259,7 @@ Lookup* IndoPak::forsmallhighwaw() {
 Lookup* IndoPak::populatecvxx() {
   int cvNumber = 1;
 
-  for (auto alternates : cvxxfeatures) {
+  for (const auto& alternates : cvxxfeatures) {
     Lookup* alternate = new Lookup(m_layout);
     alternate->name = QString("cv%1").arg(cvNumber, 2, 10, QLatin1Char('0'));
     alternate->feature = alternate->name;
@@ -2296,7 +2288,7 @@ Lookup* IndoPak::glyphalternates() {
 
   bool isExtended = m_layout->isExtended();
 
-  unordered_map<QString, QString> cv01mappings;
+  std::unordered_map<QString, QString> cv01mappings;
 
   cv01mappings.insert({"noon.isol", "noon.isol.expa"});
   cv01mappings.insert({"behshape.isol", "behshape.isol.expa"});
@@ -2324,10 +2316,10 @@ Lookup* IndoPak::glyphalternates() {
 
   struct AltFeature {
     struct Subst {
-      QString glyph;
-      QString substitute;
+      std::string glyph;
+      std::string substitute;
     };
-    QString featureName;
+    std::string featureName;
     std::vector<Subst> alternates;
   };
 
@@ -2345,7 +2337,7 @@ Lookup* IndoPak::glyphalternates() {
 
   for (auto& feature : altfeatures) {
     Lookup* alternate = new Lookup(m_layout);
-    alternate->name = feature.featureName;
+    alternate->name = QString::fromStdString(feature.featureName);
     alternate->feature = alternate->name;
     alternate->type = Lookup::alternate;
 
@@ -2356,19 +2348,21 @@ Lookup* IndoPak::glyphalternates() {
     alternate->name = alternate->name;
 
     for (auto mapping : feature.alternates) {
-      QVector<ExtendedGlyph> alternates;
-      int code = m_layout->glyphCodePerName[mapping.glyph];
-      int substcode = m_layout->glyphCodePerName[mapping.substitute];
+      std::vector<ExtendedGlyph> alternates;
+      const auto glyphName = QString::fromStdString(mapping.glyph);
+      const auto substituteName = QString::fromStdString(mapping.substitute);
+      int code = m_layout->glyphCodePerName[glyphName];
+      int substcode = m_layout->glyphCodePerName[substituteName];
       ValueLimits valueLimits;
 
-      if (m_layout->expandableGlyphs.contains(mapping.glyph)) {
-        valueLimits = m_layout->expandableGlyphs[mapping.glyph];
+      if (m_layout->expandableGlyphs.contains(glyphName)) {
+        valueLimits = m_layout->expandableGlyphs[glyphName];
       }
 
       if (code == 0 || substcode == 0) {
         throw new std::runtime_error("Glyph name invalid");
       }
-      alternates.append({substcode, 0, 0});
+      alternates.push_back({substcode, 0, 0});
       alternateSubtable->alternates[code] = alternates;
 
       for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 6.0); leftTatweel += 0.5) {
@@ -2377,8 +2371,8 @@ Lookup* IndoPak::glyphalternates() {
         parameters.righttatweel = 0.0;
         GlyphVis* newglyph = m_layout->getAlternate(code, parameters, !isExtended, !isExtended);
         if (newglyph != nullptr) {
-          QVector<ExtendedGlyph> alternates2;
-          alternates2.append({substcode, leftTatweel, 0});
+          std::vector<ExtendedGlyph> alternates2;
+          alternates2.push_back({substcode, leftTatweel, 0});
           alternateSubtable->alternates[newglyph->charcode] = alternates2;
         }
       }
@@ -2386,7 +2380,7 @@ Lookup* IndoPak::glyphalternates() {
   }
 
   // decomp
-  unordered_map<QString, QString> mappingsdecomp;
+  std::unordered_map<QString, QString> mappingsdecomp;
 
   mappingsdecomp.insert({"behshape.medi", "behshape.medi.expa"});
 
@@ -2446,7 +2440,7 @@ Lookup* IndoPak::glyphalternates() {
   alternate->name = alternate->name;
 
   for (auto mapping : mappingsdecomp) {
-    QVector<ExtendedGlyph> alternates;
+    std::vector<ExtendedGlyph> alternates;
     int code = m_layout->glyphCodePerName[mapping.first];
     int substcode = m_layout->glyphCodePerName[mapping.second];
 
@@ -2459,7 +2453,7 @@ Lookup* IndoPak::glyphalternates() {
     if (code == 0 || substcode == 0) {
       throw new std::runtime_error("Glyph name invalid");
     }
-    alternates.append({substcode, 0, 0});
+    alternates.push_back({substcode, 0, 0});
     alternateSubtable->alternates[code] = alternates;
 
     for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 6.0); leftTatweel += 0.5) {
@@ -2468,8 +2462,8 @@ Lookup* IndoPak::glyphalternates() {
       parameters.righttatweel = 0.0;
       GlyphVis* newglyph = m_layout->getAlternate(code, parameters, !isExtended, !isExtended);
       if (newglyph != nullptr) {
-        QVector<ExtendedGlyph> alternates2;
-        alternates2.append({substcode, leftTatweel, 0});
+        std::vector<ExtendedGlyph> alternates2;
+        alternates2.push_back({substcode, leftTatweel, 0});
         alternateSubtable->alternates[newglyph->charcode] = alternates2;
       }
     }
@@ -2485,10 +2479,10 @@ Lookup* IndoPak::glyphalternates() {
 
   alternateSubtable = new AlternateSubtableWithTatweel(alternate);
   alternate->subtables.append(alternateSubtable);
-  alternateSubtable->name = alternate->name;
+  alternateSubtable->name = asStdString(alternate->name);
 
   for (auto mapping : cv01mappings) {
-    QVector<ExtendedGlyph> alternates;
+    std::vector<ExtendedGlyph> alternates;
     int code = m_layout->glyphCodePerName[mapping.first];
     int substcode = m_layout->glyphCodePerName[mapping.second];
 
@@ -2497,27 +2491,27 @@ Lookup* IndoPak::glyphalternates() {
     }
     auto sameSubst = mapping.first == "kaf.isol" || mapping.first == "alef.fina";
     if (!sameSubst) {
-      alternates.append({substcode, 0, 0});
+      alternates.push_back({substcode, 0, 0});
     }
 
-    alternates.append({substcode, 1, 0});
-    alternates.append({substcode, 2, 0});
-    alternates.append({substcode, 3, 0});
-    alternates.append({substcode, 4, 0});
-    alternates.append({substcode, 5, 0});
-    alternates.append({substcode, 6, 0});
-    alternates.append({substcode, 7, 0});
-    alternates.append({substcode, 8, 0});
-    alternates.append({substcode, 9, 0});
-    alternates.append({substcode, 10, 0});
-    alternates.append({substcode, 11, 0});
+    alternates.push_back({substcode, 1, 0});
+    alternates.push_back({substcode, 2, 0});
+    alternates.push_back({substcode, 3, 0});
+    alternates.push_back({substcode, 4, 0});
+    alternates.push_back({substcode, 5, 0});
+    alternates.push_back({substcode, 6, 0});
+    alternates.push_back({substcode, 7, 0});
+    alternates.push_back({substcode, 8, 0});
+    alternates.push_back({substcode, 9, 0});
+    alternates.push_back({substcode, 10, 0});
+    alternates.push_back({substcode, 11, 0});
     if (sameSubst) {
-      alternates.append({substcode, 12, 0});
+      alternates.push_back({substcode, 12, 0});
     }
     alternateSubtable->alternates[code] = alternates;
   }
 
-  unordered_map<QString, QString> mappingLigaRightOnlys;
+  std::unordered_map<QString, QString> mappingLigaRightOnlys;
 
   mappingLigaRightOnlys.insert({"ain.init.finjani", "ain.init"});
   mappingLigaRightOnlys.insert({"hah.init.ii", "hah.init"});
@@ -2526,19 +2520,19 @@ Lookup* IndoPak::glyphalternates() {
   mappingLigaRightOnlys.insert({"lam.init.beforelam", "lam.init"});
 
   for (auto mapping : mappingLigaRightOnlys) {
-    QVector<ExtendedGlyph> alternates;
+    std::vector<ExtendedGlyph> alternates;
     int code = m_layout->glyphCodePerName[mapping.first];
     int substcode = m_layout->glyphCodePerName[mapping.second];
 
     if (code == 0 || substcode == 0) {
       throw new std::runtime_error("Glyph name invalid");
     }
-    alternates.append({substcode, 1, 0});
-    alternates.append({substcode, 2, 0});
-    alternates.append({substcode, 3, 0});
-    alternates.append({substcode, 4, 0});
-    alternates.append({substcode, 5, 0});
-    alternates.append({substcode, 6, 0});
+    alternates.push_back({substcode, 1, 0});
+    alternates.push_back({substcode, 2, 0});
+    alternates.push_back({substcode, 3, 0});
+    alternates.push_back({substcode, 4, 0});
+    alternates.push_back({substcode, 5, 0});
+    alternates.push_back({substcode, 6, 0});
     alternateSubtable->alternates[code] = alternates;
   }
 
@@ -2548,13 +2542,13 @@ Lookup* IndoPak::glyphalternates() {
   int substcode = m_layout->glyphCodePerName["behshape.medi.expa"];
 
   for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 3.0); leftTatweel += 0.5) {
-    QVector<ExtendedGlyph> alternates;
+    std::vector<ExtendedGlyph> alternates;
     GlyphParameters parameters;
     parameters.lefttatweel = leftTatweel;
     parameters.righttatweel = 0.0;
     GlyphVis* newglyph = m_layout->getAlternate(glyphCode, parameters, !isExtended, !isExtended);
     for (double leftTatweel2 = leftTatweel + 1; leftTatweel2 <= std::min(valueLimits.maxLeft, 6.0); leftTatweel2 += 1) {
-      alternates.append({substcode, leftTatweel2, 0});
+      alternates.push_back({substcode, leftTatweel2, 0});
     }
     alternateSubtable->alternates[newglyph->charcode] = alternates;
   }
@@ -2569,7 +2563,7 @@ Lookup* IndoPak::glyphalternates() {
 
     if (valueLimits.maxLeft > 0) {
       for (double leftTatweel = 0; leftTatweel <= std::min(valueLimits.maxLeft, 3.0); leftTatweel += 0.5) {
-        QVector<ExtendedGlyph> alternates;
+        std::vector<ExtendedGlyph> alternates;
         GlyphParameters parameters;
         parameters.lefttatweel = leftTatweel;
         parameters.righttatweel = 0.0;
@@ -2584,11 +2578,11 @@ Lookup* IndoPak::glyphalternates() {
           if (leftTatweel2 > 6) {
             leftTatweel2 = 6;
           }
-          alternates.append({glyphCode, leftTatweel2, 0});
+          alternates.push_back({glyphCode, leftTatweel2, 0});
         }
         /*
         for (double leftTatweel2 = leftTatweel + 1; leftTatweel2 <= std::min(valueLimits.maxLeft, 6.0F); leftTatweel2 += 1) {
-          alternates.append({ glyphCode,leftTatweel2,0 });
+          alternates.push_back({ glyphCode,leftTatweel2,0 });
         }*/
         alternateSubtable->alternates[newCode] = alternates;
       }
@@ -2612,22 +2606,22 @@ Lookup* IndoPak::glyphalternates() {
     auto valueLimits = glyph.second;
 
     if (valueLimits.maxRight > 0) {
-      QVector<ExtendedGlyph> alternates;
+      std::vector<ExtendedGlyph> alternates;
       for (double righttatweel = 0.5; righttatweel <= std::min(valueLimits.maxRight, 6.0); righttatweel += 0.5) {
-        alternates.append({glyphCode, 0, righttatweel});
+        alternates.push_back({glyphCode, 0, righttatweel});
       }
       alternateSubtable->alternates[glyphCode] = alternates;
     };
 
     if (valueLimits.maxLeft > 0 && valueLimits.maxRight > 0) {
       for (double leftTatweel = 0.5; leftTatweel <= std::min(valueLimits.maxLeft, 3.0); leftTatweel += 0.5) {
-        QVector<ExtendedGlyph> alternates;
+        std::vector<ExtendedGlyph> alternates;
         GlyphParameters parameters;
         parameters.lefttatweel = leftTatweel;
         parameters.righttatweel = 0.0;
         GlyphVis* newglyph = m_layout->getAlternate(glyphCode, parameters, !isExtended, !isExtended);
         for (double righttatweel = 0.5; righttatweel <= std::min(valueLimits.maxRight, 6.0); righttatweel += 0.5) {
-          alternates.append({glyphCode, leftTatweel, righttatweel});
+          alternates.push_back({glyphCode, leftTatweel, righttatweel});
         }
         alternateSubtable->alternates[newglyph->charcode] = alternates;
       }
