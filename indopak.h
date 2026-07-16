@@ -47,13 +47,13 @@ class IndoPak : public Automedina {
 class Waqffinabasemark : public AnchorCalc {
  public:
   Waqffinabasemark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-  QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
-    GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
+  Point operator()(std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) override {
+    GlyphVis& curr = _y.glyphs[glyphName];
 
     int width = curr.width / 2 + adjust.x();
     int height = 0;
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
 
  private:
@@ -63,13 +63,13 @@ class Waqffinabasemark : public AnchorCalc {
 class Waqffinamark : public AnchorCalc {
  public:
   Waqffinamark(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-  QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
-    GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
+  Point operator()(std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) override {
+    GlyphVis& curr = _y.glyphs[glyphName];
 
     int width = curr.width / 2 + adjust.x();
     int height = curr.height + 30 + adjust.y();
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
 
  private:
@@ -79,13 +79,13 @@ class Waqffinamark : public AnchorCalc {
 class Waqfbasebelow : public AnchorCalc {
  public:
   Waqfbasebelow(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-  QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
-    GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
+  Point operator()(std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) override {
+    GlyphVis& curr = _y.glyphs[glyphName];
 
     int width = curr.width / 2 + adjust.x();
     int height = curr.height + 30 + adjust.y();
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
 
  private:
@@ -95,13 +95,13 @@ class Waqfbasebelow : public AnchorCalc {
 class Waqfmarkabove : public AnchorCalc {
  public:
   Waqfmarkabove(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-  QPoint operator()(QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) override {
-    GlyphVis& curr = _y.glyphs[glyphName.toStdString()];
+  Point operator()(std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) override {
+    GlyphVis& curr = _y.glyphs[glyphName];
 
     int width = curr.width / 2 + adjust.x();
     int height = 0;
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
 
  private:
@@ -111,13 +111,13 @@ class Waqfmarkabove : public AnchorCalc {
 class AfterRehWaw {
  public:
   AfterRehWaw(Automedina& y, MarkBaseSubtable& subtable) : _y(y), _subtable(subtable) {}
-  QPoint operator()(bool entry, GlyphVis* originalglyph, GlyphVis* extendedglyph) {
+  Point operator()(bool entry, GlyphVis* originalglyph, GlyphVis* extendedglyph) {
     if (entry) {
-      QPoint entry = QPoint(extendedglyph->width, 0);
+      Point entry = Point(extendedglyph->width, 0);
 
       return entry;
     } else {
-      return QPoint(0, 0);
+      return Point(0, 0);
     }
   };
 

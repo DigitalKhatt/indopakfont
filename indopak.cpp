@@ -668,8 +668,8 @@ Lookup* IndoPak::rehwawcursivecpp() {
    public:
     CustomCursiveSubtable(Lookup* lookup) : CursiveSubtable(lookup) {}
 
-    virtual QPoint calculateEntry(GlyphVis* originalglyph, GlyphVis* extendedglyph, QPoint defaultEntry) {
-      QPoint entry = QPoint(extendedglyph->width, 0);
+    virtual Point calculateEntry(GlyphVis* originalglyph, GlyphVis* extendedglyph, Point defaultEntry) {
+      Point entry = Point(extendedglyph->width, 0);
 
       return entry;
     }
@@ -879,19 +879,19 @@ Lookup* IndoPak::defaultmarkposition() {
   newsubtable->name = "hamzabelow.joined";
   newsubtable->base = {".init|.medi"};
   newsubtable->classes["hamzabelow"].mark = {"hamzabelow.joined"};
-  newsubtable->classes["hamzabelow"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis* curr = &glyphs[glyphName.toStdString()];
+  newsubtable->classes["hamzabelow"].basefunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis* curr = &glyphs[glyphName];
 
     curr = curr->getAlternate(parameters);
 
     int width = 100 + adjust.x();
     int height = curr->depth + adjust.y();
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
-  newsubtable->classes["hamzabelow"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis* curr = &glyphs[glyphName.toStdString()];
-    return QPoint(adjust.x(), adjust.y() + 100 + curr->height);
+  newsubtable->classes["hamzabelow"].markfunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis* curr = &glyphs[glyphName];
+    return Point(adjust.x(), adjust.y() + 100 + curr->height);
   };
 
   // default
@@ -1005,19 +1005,19 @@ Lookup* IndoPak::defaultmarkposition() {
   newsubtable->name = "takhallus";
   newsubtable->base = {"bases"};
   newsubtable->classes["takhallus"].mark = {"takhallus"};
-  newsubtable->classes["takhallus"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
+  newsubtable->classes["takhallus"].basefunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
 
     auto disp = 1000;
 
     int width = adjust.x() + curr.width / 2;
     int height = disp + adjust.y();
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
-  newsubtable->classes["takhallus"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
-    return QPoint(adjust.x() + curr.width / 2, adjust.y());
+  newsubtable->classes["takhallus"].markfunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
+    return Point(adjust.x() + curr.width / 2, adjust.y());
   };
 
   // aya waqf
@@ -1027,17 +1027,17 @@ Lookup* IndoPak::defaultmarkposition() {
   newsubtable->name = "waqfsubtable";
   newsubtable->base = {"aya"};
   newsubtable->classes["waqfmarksaya"].mark = {"waqfmarksaya"};
-  newsubtable->classes["waqfmarksaya"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
+  newsubtable->classes["waqfmarksaya"].basefunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
 
     int width = curr.width / 2 + adjust.x();
     int height = 50 + curr.height + adjust.y();
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
-  newsubtable->classes["waqfmarksaya"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
-    return QPoint(adjust.x() + curr.width / 2, adjust.y());
+  newsubtable->classes["waqfmarksaya"].markfunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
+    return Point(adjust.x() + curr.width / 2, adjust.y());
   };
 
   // fina waqf
@@ -1047,21 +1047,21 @@ Lookup* IndoPak::defaultmarkposition() {
   newsubtable->name = "waqfsubtable";
   newsubtable->base = {"waqfbase.isol", "disputedeoa"};
   newsubtable->classes["waqfmarksfina"].mark = {"waqfmarksfina"};
-  newsubtable->classes["waqfmarksfina"].basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
+  newsubtable->classes["waqfmarksfina"].basefunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
 
     auto disp = glyphName == "waqfbase.isol" ? 330 : 30;
 
     int width = adjust.x() + curr.width / 2;
     int height = disp + curr.height + adjust.y();
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
-  newsubtable->classes["waqfmarksfina"].markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
+  newsubtable->classes["waqfmarksfina"].markfunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
     int width = adjust.x() + curr.width / 2;
     int height = adjust.y();
-    return QPoint(width, height);
+    return Point(width, height);
   };
 
   return lookup;
@@ -1155,8 +1155,8 @@ Lookup* IndoPak::waqfMkmkPositioning() {
                                            : seq.size() == 3   ? 400
                                                                : 500;
 
-      auto basefunction = [this, waqfKern, waqfHeight](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-        GlyphVis& curr = glyphs[glyphName.toStdString()];
+      auto basefunction = [this, waqfKern, waqfHeight](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+        GlyphVis& curr = glyphs[glyphName];
 
         int height = waqfHeight;
         auto width = -waqfKern;  // curr.bbox.llx;
@@ -1164,11 +1164,11 @@ Lookup* IndoPak::waqfMkmkPositioning() {
         width = width + adjust.x();
         height = height + adjust.y();
 
-        return QPoint(width, height);
+        return Point(width, height);
       };
 
-      auto markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-        GlyphVis& curr = glyphs[glyphName.toStdString()];
+      auto markfunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+        GlyphVis& curr = glyphs[glyphName];
 
         int height = 0;
         int width = 0;
@@ -1176,7 +1176,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
         width = width + adjust.x();
         height = height + adjust.y();
 
-        return QPoint(width, height);
+        return Point(width, height);
       };
 
       MarkBaseSubtable* markSubtabe = new MarkBaseSubtable(sublookup);
@@ -1240,8 +1240,8 @@ Lookup* IndoPak::waqfMkmkPositioning() {
   sublookup->type = Lookup::mark2mark;
   m_layout->addLookup(sublookup);
 
-  auto basefunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
+  auto basefunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
 
     int height = 0;  // (int)curr.height + spacebasetotopmark;
     int width = curr.width / 2;
@@ -1249,11 +1249,11 @@ Lookup* IndoPak::waqfMkmkPositioning() {
     width = width + adjust.x();
     height = height + adjust.y();
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
 
-  auto markfunction = [this](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
+  auto markfunction = [this](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
 
     int height = (int)curr.height + 50;
     int width = curr.width / 2;
@@ -1261,7 +1261,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
     width = width + adjust.x();
     height = height + adjust.y();
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
 
   auto markSubtabe = new MarkBaseSubtable(sublookup);
@@ -1408,8 +1408,8 @@ Lookup* IndoPak::defaultmarkdotmarks() {
   topsubtable->name = "defaultmarkdotmarkstop";
   topsubtable->base = {"topdotmarks"};
 
-  auto basetopfunction = [this, topsubtable](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
+  auto basetopfunction = [this, topsubtable](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
 
     int width = curr.width * 0.5;
     int height = (int)curr.height + 80;
@@ -1417,7 +1417,7 @@ Lookup* IndoPak::defaultmarkdotmarks() {
     width = width + adjust.x();
     height = height + adjust.y();
 
-    return QPoint(width, height);
+    return Point(width, height);
   };
 
   auto topmarks = classes["topmarks"];
@@ -1446,8 +1446,8 @@ Lookup* IndoPak::defaultmarkdotmarks() {
   bottomsubtable->name = "defaultmarkdotmarksbottom";
   bottomsubtable->base = {"downdotmarks"};
 
-  auto basedownfunction = [this, bottomsubtable](QString glyphName, QString className, QPoint adjust, GlyphParameters parameters) -> QPoint {
-    GlyphVis& curr = glyphs[glyphName.toStdString()];
+  auto basedownfunction = [this, bottomsubtable](std::string glyphName, std::string className, Point adjust, GlyphParameters parameters) -> Point {
+    GlyphVis& curr = glyphs[glyphName];
 
     int depth = -(int)curr.depth + 50;
     int width = curr.width * 0.5;
@@ -1455,7 +1455,7 @@ Lookup* IndoPak::defaultmarkdotmarks() {
     width = width + adjust.x();
     depth = depth - adjust.y();
 
-    return QPoint(width, -depth);
+    return Point(width, -depth);
   };
 
   bottomsubtable->classes["lowmarks"].mark = {"lowmarks"};
