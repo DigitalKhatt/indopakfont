@@ -1081,7 +1081,8 @@ Lookup* IndoPak::waqfMkmkPositioning() {
     lookup->feature = "";
     lookup->type = Lookup::chainingpos;
     lookup->flags = Lookup::Flags::UseMarkFilteringSet;
-    lookup->markGlyphSetIndex = m_layout->addMarkSet(QList<std::uint16_t>(waqfCodes.begin(), waqfCodes.end()));
+    lookup->markGlyphSetIndex = m_layout->addMarkSet(
+        std::vector<std::uint16_t>(waqfCodes.begin(), waqfCodes.end()));
     m_layout->addLookup(lookup);
 
     QVector<QVector<std::uint16_t>> waqfSequences{{}};
@@ -1197,7 +1198,8 @@ Lookup* IndoPak::waqfMkmkPositioning() {
   lookup->feature = "mkmk";
   lookup->type = Lookup::chainingpos;
   lookup->flags = Lookup::Flags::UseMarkFilteringSet;
-  lookup->markGlyphSetIndex = m_layout->addMarkSet(QList<std::uint16_t>(waqfCodes.begin(), waqfCodes.end()));
+  lookup->markGlyphSetIndex = m_layout->addMarkSet(
+      std::vector<std::uint16_t>(waqfCodes.begin(), waqfCodes.end()));
 
   /*
   auto subtable = new ChainingSubtable(lookup);
@@ -2232,7 +2234,8 @@ Lookup* IndoPak::forsmallhighwaw() {
   lookup->name = "forsmallhighwaw";
   lookup->feature = "rlig";
   lookup->type = Lookup::chainingsub;
-  lookup->markGlyphSetIndex = m_layout->addMarkSet(QList{(std::uint16_t)glyphs["smallhighwaw"].charcode});
+  lookup->markGlyphSetIndex = m_layout->addMarkSet(
+      std::vector<std::uint16_t>{(std::uint16_t)glyphs["smallhighwaw"].charcode});
   lookup->flags = lookup->flags | Lookup::Flags::UseMarkFilteringSet;
 
   // forsmallalefwithmaddah
