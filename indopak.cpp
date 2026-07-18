@@ -5,7 +5,6 @@
 #include "GlyphVis.h"
 #include "Lookup.h"
 #include "Subtable.h"
-#include "font.hpp"
 #include "markpositions.h"
 #include "metafont.h"
 #include "qdebug.h"
@@ -17,7 +16,7 @@ using namespace std;
 namespace indopak {
 
 void IndoPak::generateGlyphs() {
-  auto edgess = font->getEdges();
+  auto edgess = font->edges();
 
   glyphs.clear();
 
@@ -118,11 +117,11 @@ void IndoPak::generateAyas(std::string ayaName, bool colored, int unicode) {
       setcolored = QString("coloredglyph:=\"%1.colored%2\"").arg(ayaNameQ).arg(ayaNumber);
     }
     QString data = QString("beginchar(%1%2,%4,-1,1,-1);\n%%beginbody\ngenAyaNumber(%1, %2,380);%3;endchar;").arg(ayaNameQ).arg(ayaNumber).arg(setcolored).arg(codechar);
-    m_layout->font->executeMetaPost(data.toLatin1().toStdString());
+    m_layout->font->execute(data.toLatin1().toStdString());
     addedGlyphs[QString("%1%2").arg(ayaNameQ).arg(ayaNumber).toStdString()] = data.toStdString();
     if (colored) {
       data = QString("beginchar(%1.colored%2,-1,-1,5,-1);\n%%beginbody\ngenAyaNumber(%1.colored, %2,380);endchar;").arg(ayaNameQ).arg(ayaNumber);
-      m_layout->font->executeMetaPost(data.toLatin1().toStdString());
+      m_layout->font->execute(data.toLatin1().toStdString());
       addedGlyphs[QString("%1.colored%2").arg(ayaNameQ).arg(ayaNumber).toStdString()] = data.toStdString();
     }
   }
@@ -132,8 +131,8 @@ void IndoPak::addchars() {
   generateAyas("endofaya", false, -1);
 }
 
-IndoPak::IndoPak(OtLayout* layout, Font* font, bool extended) : Automedina{layout, font, extended} {
-  isForCoreText = font->getBoolVariable("isForCoreText");
+IndoPak::IndoPak(OtLayout* layout, MPFont* font, bool extended) : Automedina{layout, font, extended} {
+  isForCoreText = font->boolVariable("isForCoreText");
   // m_metafont = layout->m_font;
   classes["marks"] = {
       //"cgj",

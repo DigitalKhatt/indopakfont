@@ -8,7 +8,7 @@ namespace indopak {
 
 class IndoPak : public Automedina {
  public:
-  IndoPak(OtLayout* layout, Font* font, bool extended);
+  IndoPak(OtLayout* layout, MPFont* font, bool extended);
   Lookup* getLookup(std::string lookupName) override;
   CalcAnchor getanchorCalcFunctions(std::string functionName, Subtable* subtable) override;
   CursiveAnchorFunc getCursiveFunctions(std::string functionName, Subtable* subtable) override;
