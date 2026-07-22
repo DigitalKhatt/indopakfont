@@ -7,9 +7,9 @@
 #include "Subtable.h"
 #include "markpositions.h"
 #include "metafont.h"
-#include "qdebug.h"
-#include "qregularexpression.h"
-#include "qstring.h"
+#include <format>
+
+#include "digitalkhatt/core/Regex16.h"
 
 using namespace std;
 
@@ -21,10 +21,10 @@ void IndoPak::generateGlyphs() {
   glyphs.clear();
 
   for (auto edges : edgess) {
-    auto name = QString(edges->charname);
+    auto name = std::string(edges->charname);
 
     if (name != "alternatechar") {
-      GlyphVis& glyph = glyphs.insert_or_assign(name.toStdString(), GlyphVis(m_layout, edges)).first->second;
+      GlyphVis& glyph = glyphs.insert_or_assign(name, GlyphVis(m_layout, edges)).first->second;
 
       if (edges->glyphtype != (int)GlyphType::GlyphTypeColored && edges->glyphtype != (int)GlyphType::GlyphTypeTemp) {
         m_layout->glyphNamePerCode[glyph.charcode] = glyph.name;
@@ -71,10 +71,10 @@ void IndoPak::generateGlyphs() {
     }
   }
 
-  auto addFake = [this](QString glyphName, std::uint16_t unicode, std::uint16_t codechar) {
+  auto addFake = [this](std::string glyphName, std::uint16_t unicode, std::uint16_t codechar) {
     auto code = unicode;  // codechar; //layout.glyphNamePerCode.lastKey();
-    GlyphVis& glyph = glyphs.insert_or_assign(glyphName.toStdString(), GlyphVis()).first->second;
-    glyph.name = glyphName.toStdString();
+    GlyphVis& glyph = glyphs.insert_or_assign(glyphName, GlyphVis()).first->second;
+    glyph.name = glyphName;
     glyph.charcode = code;
 
     m_layout->glyphNamePerCode[glyph.charcode] = glyph.name;
@@ -108,21 +108,20 @@ void IndoPak::generateGlyphs() {
 }
 
 void IndoPak::generateAyas(std::string ayaName, bool colored, int unicode) {
-  QString ayaNameQ = QString::fromStdString(ayaName);
   int codechar = unicode - 1;
   for (int ayaNumber = 1; ayaNumber <= 286; ayaNumber++) {
     codechar = unicode == -1 ? -1 : codechar + 1;
-    QString setcolored;
+    std::string setcolored;
     if (colored) {
-      setcolored = QString("coloredglyph:=\"%1.colored%2\"").arg(ayaNameQ).arg(ayaNumber);
+      setcolored = std::format("coloredglyph:=\"{}.colored{}\"", ayaName, ayaNumber);
     }
-    QString data = QString("beginchar(%1%2,%4,-1,1,-1);\n%%beginbody\ngenAyaNumber(%1, %2,380);%3;endchar;").arg(ayaNameQ).arg(ayaNumber).arg(setcolored).arg(codechar);
-    m_layout->font->execute(data.toLatin1().toStdString());
-    addedGlyphs[QString("%1%2").arg(ayaNameQ).arg(ayaNumber).toStdString()] = data.toStdString();
+    std::string data = std::format("beginchar({}{},{},-1,1,-1);\n%beginbody\ngenAyaNumber({}, {},380);{};endchar;", ayaName, ayaNumber, codechar, ayaName, ayaNumber, setcolored);
+    m_layout->font->execute(data);
+    addedGlyphs[std::format("{}{}", ayaName, ayaNumber)] = data;
     if (colored) {
-      data = QString("beginchar(%1.colored%2,-1,-1,5,-1);\n%%beginbody\ngenAyaNumber(%1.colored, %2,380);endchar;").arg(ayaNameQ).arg(ayaNumber);
-      m_layout->font->execute(data.toLatin1().toStdString());
-      addedGlyphs[QString("%1.colored%2").arg(ayaNameQ).arg(ayaNumber).toStdString()] = data.toStdString();
+      data = std::format("beginchar({}.colored{},-1,-1,5,-1);\n%beginbody\ngenAyaNumber({}.colored, {},380);endchar;", ayaName, ayaNumber, ayaName, ayaNumber);
+      m_layout->font->execute(data);
+      addedGlyphs[std::format("{}.colored{}", ayaName, ayaNumber)] = data;
     }
   }
 }
@@ -1076,7 +1075,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
 
   auto addLookup = [this, &waqfCodes, &endWordCodes, &endWordClass](int numMarks) -> void {
     Lookup* lookup = new Lookup(m_layout);
-    lookup->name = QString("waqfmkmkpositioning.l%1").arg(numMarks).toStdString();
+    lookup->name = "waqfmkmkpositioning.l" + std::to_string(numMarks);
     lookup->feature = "";
     lookup->type = Lookup::chainingpos;
     lookup->flags = Lookup::Flags::UseMarkFilteringSet;
@@ -1084,16 +1083,16 @@ Lookup* IndoPak::waqfMkmkPositioning() {
         std::vector<std::uint16_t>(waqfCodes.begin(), waqfCodes.end()));
     m_layout->addLookup(lookup);
 
-    QVector<QVector<std::uint16_t>> waqfSequences{{}};
+    std::vector<std::vector<std::uint16_t>> waqfSequences{{}};
 
     for (int i = 1; i <= numMarks; i++) {
       auto tempWaqfSequences = waqfSequences;
       waqfSequences.clear();
       for (auto code : waqfCodes) {
         for (auto seq : tempWaqfSequences) {
-          if (!seq.contains(code)) {
-            seq.append(code);
-            waqfSequences.append(seq);
+          if (std::find(seq.begin(), seq.end(), code) == seq.end()) {
+            seq.push_back(code);
+            waqfSequences.push_back(seq);
           }
         }
       }
@@ -1112,12 +1111,12 @@ Lookup* IndoPak::waqfMkmkPositioning() {
 
       ChainingSubtable* subtable = new ChainingSubtable(lookup);
       lookup->subtables.push_back(subtable);
-      subtable->name = asStdString(QString("subtable%1").arg(++subtableNum));
+      subtable->name = "subtable" + std::to_string(++subtableNum);
       subtable->compiledRule = ChainingSubtable::CompiledRule();
       subtable->compiledRule.input = {endWordCodes, {seq[0]}};
 
-      auto lkernName = QString("lkern%1").arg(subtableNum);
-      auto lmarkName = QString("lmark%1").arg(subtableNum);
+      auto lkernName = "lkern" + std::to_string(subtableNum);
+      auto lmarkName = "lmark" + std::to_string(subtableNum);
 
       subtable->compiledRule.lookupRecords.push_back({0, asStdString(lkernName)});
       subtable->compiledRule.lookupRecords.push_back({1, asStdString(lmarkName)});
@@ -1128,7 +1127,7 @@ Lookup* IndoPak::waqfMkmkPositioning() {
       }
 
       Lookup* sublookup = new Lookup(m_layout);
-      sublookup->name = lookup->name + "." + lkernName.toStdString();
+      sublookup->name = lookup->name + "." + lkernName;
       sublookup->feature = "";
       sublookup->type = Lookup::singleadjustment;
       m_layout->addLookup(sublookup);
@@ -1139,11 +1138,11 @@ Lookup* IndoPak::waqfMkmkPositioning() {
       singleadjsubtable->name = asStdString(sublookup->name);
 
       for (auto endWordCode : endWordCodes) {
-        singleadjsubtable->singlePos[endWordCode] = {(qint16)maxWidth, 0, (qint16)maxWidth, 0};
+        singleadjsubtable->singlePos[endWordCode] = {(std::int16_t)maxWidth, 0, (std::int16_t)maxWidth, 0};
       }
 
       sublookup = new Lookup(m_layout);
-      sublookup->name = lookup->name + "." + lmarkName.toStdString();
+      sublookup->name = lookup->name + "." + lmarkName;
       sublookup->feature = "";
       sublookup->type = Lookup::mark2base;
       m_layout->addLookup(sublookup);
@@ -1473,10 +1472,8 @@ Lookup* IndoPak::pointmarks() {
   lookup->flags = 0;
 
   for (auto pointmark : classes["dotmarks"]) {
-    QString sublookupName = QString::fromStdString(pointmark);
-
     Lookup* sublookup = new Lookup(m_layout);
-    sublookup->name = lookup->name + "." + sublookupName.toStdString();
+    sublookup->name = lookup->name + "." + pointmark;
     sublookup->feature = "";
     sublookup->type = Lookup::mark2base;
     sublookup->flags = 0;
@@ -1500,15 +1497,15 @@ Lookup* IndoPak::pointmarks() {
     ChainingSubtable* newsubtable = new ChainingSubtable(lookup);
     lookup->subtables.push_back(newsubtable);
 
-    newsubtable->name = asStdString("pointmarks_" + sublookupName);
+    newsubtable->name = asStdString("pointmarks_" + pointmark);
 
     newsubtable->compiledRule = ChainingSubtable::CompiledRule();
 
     newsubtable->compiledRule.backtrack.push_back({classtoUnicode("bases")});
-    newsubtable->compiledRule.input.push_back(std::unordered_set{(std::uint16_t)glyphs[sublookupName.toStdString()].charcode});
+    newsubtable->compiledRule.input.push_back(std::unordered_set{(std::uint16_t)glyphs[pointmark].charcode});
     newsubtable->compiledRule.input.push_back(classtoUnicode("marks"));
 
-    newsubtable->compiledRule.lookupRecords.push_back({1, asStdString(sublookupName)});
+    newsubtable->compiledRule.lookupRecords.push_back({1, asStdString(pointmark)});
   }
 
   return lookup;
@@ -1556,7 +1553,7 @@ Lookup* IndoPak::ayanumberskern() {
   for (int ayaNumber = 286; ayaNumber >= 1; ayaNumber--) {
     if (ayaNumber < 10) {
       Lookup* sublookup = new Lookup(m_layout);
-      sublookup->name = QString("ayanumberskern.l%1").arg(ayaNumber).toStdString();
+      sublookup->name = "ayanumberskern.l" + std::to_string(ayaNumber);
       sublookup->feature = "";
       sublookup->type = Lookup::singleadjustment;
       m_layout->addLookup(sublookup);
@@ -1579,14 +1576,14 @@ Lookup* IndoPak::ayanumberskern() {
       subtable->name = singleadjsubtable->name;
       subtable->compiledRule = ChainingSubtable::CompiledRule();
       subtable->compiledRule.input = {{(uint16_t)ayaGlyph.charcode}, {(uint16_t)onesglyph.charcode}};
-      subtable->compiledRule.lookupRecords.push_back({1, asStdString(QString("l%1").arg(ayaNumber))});
+      subtable->compiledRule.lookupRecords.push_back({1, asStdString("l" + std::to_string(ayaNumber))});
 
     } else if (ayaNumber < 100) {
       int onesdigit = ayaNumber % 10;
       int tensdigit = ayaNumber / 10;
 
       Lookup* sublookup1 = new Lookup(m_layout);
-      sublookup1->name = QString("ayanumberskern.l%1.1").arg(ayaNumber).toStdString();
+      sublookup1->name = "ayanumberskern.l" + std::to_string(ayaNumber) + ".1";
       sublookup1->feature = "";
       sublookup1->type = Lookup::singleadjustment;
       m_layout->addLookup(sublookup1);
@@ -1597,7 +1594,7 @@ Lookup* IndoPak::ayanumberskern() {
       singleadjsubtable1->name = asStdString(sublookup1->name);
 
       Lookup* sublookup2 = new Lookup(m_layout);
-      sublookup2->name = QString("ayanumberskern.l%1.2").arg(ayaNumber).toStdString();
+      sublookup2->name = "ayanumberskern.l" + std::to_string(ayaNumber) + ".2";
       sublookup2->feature = "";
       sublookup2->type = Lookup::singleadjustment;
       m_layout->addLookup(sublookup2);
@@ -1621,15 +1618,15 @@ Lookup* IndoPak::ayanumberskern() {
 
       ChainingSubtable* subtable = new ChainingSubtable(lookup);
       lookup->subtables.push_back(subtable);
-      subtable->name = asStdString(QString("ayanumberskern.l%1").arg(ayaNumber));
+      subtable->name = asStdString("ayanumberskern.l" + std::to_string(ayaNumber));
       subtable->compiledRule = ChainingSubtable::CompiledRule();
       subtable->compiledRule.input = {{(uint16_t)ayaGlyph.charcode}, {(uint16_t)tensglyph.charcode}, {(uint16_t)onesglyph.charcode}};
-      subtable->compiledRule.lookupRecords.push_back({1, asStdString(QString("l%1.2").arg(ayaNumber))});
-      subtable->compiledRule.lookupRecords.push_back({2, asStdString(QString("l%1.1").arg(ayaNumber))});
+      subtable->compiledRule.lookupRecords.push_back({1, asStdString("l" + std::to_string(ayaNumber) + ".2")});
+      subtable->compiledRule.lookupRecords.push_back({2, asStdString("l" + std::to_string(ayaNumber) + ".1")});
 
     } else {
       Lookup* sublookup1 = new Lookup(m_layout);
-      sublookup1->name = QString("ayanumberskern.l%1.1").arg(ayaNumber).toStdString();
+      sublookup1->name = "ayanumberskern.l" + std::to_string(ayaNumber) + ".1";
       sublookup1->feature = "";
       sublookup1->type = Lookup::singleadjustment;
       m_layout->addLookup(sublookup1);
@@ -1638,7 +1635,7 @@ Lookup* IndoPak::ayanumberskern() {
       singleadjsubtable1->name = asStdString(sublookup1->name);
 
       Lookup* sublookup2 = new Lookup(m_layout);
-      sublookup2->name = QString("ayanumberskern.l%1.2").arg(ayaNumber).toStdString();
+      sublookup2->name = "ayanumberskern.l" + std::to_string(ayaNumber) + ".2";
       sublookup2->feature = "";
       sublookup2->type = Lookup::singleadjustment;
       m_layout->addLookup(sublookup2);
@@ -1647,7 +1644,7 @@ Lookup* IndoPak::ayanumberskern() {
       singleadjsubtable2->name = asStdString(sublookup2->name);
 
       Lookup* sublookup3 = new Lookup(m_layout);
-      sublookup3->name = QString("ayanumberskern.l%1.3").arg(ayaNumber).toStdString();
+      sublookup3->name = "ayanumberskern.l" + std::to_string(ayaNumber) + ".3";
       sublookup3->feature = "";
       sublookup3->type = Lookup::singleadjustment;
       m_layout->addLookup(sublookup3);
@@ -1675,12 +1672,12 @@ Lookup* IndoPak::ayanumberskern() {
 
       ChainingSubtable* subtable = new ChainingSubtable(lookup);
       lookup->subtables.push_back(subtable);
-      subtable->name = asStdString(QString("ayanumberskern.l%1").arg(ayaNumber));
+      subtable->name = asStdString("ayanumberskern.l" + std::to_string(ayaNumber));
       subtable->compiledRule = ChainingSubtable::CompiledRule();
       subtable->compiledRule.input = {{(uint16_t)ayaGlyph.charcode}, {(uint16_t)hundredsglyph.charcode}, {(uint16_t)tensglyph.charcode}, {(uint16_t)onesglyph.charcode}};
-      subtable->compiledRule.lookupRecords.push_back({1, asStdString(QString("l%1.3").arg(ayaNumber))});
-      subtable->compiledRule.lookupRecords.push_back({2, asStdString(QString("l%1.2").arg(ayaNumber))});
-      subtable->compiledRule.lookupRecords.push_back({3, asStdString(QString("l%1.1").arg(ayaNumber))});
+      subtable->compiledRule.lookupRecords.push_back({1, asStdString("l" + std::to_string(ayaNumber) + ".3")});
+      subtable->compiledRule.lookupRecords.push_back({2, asStdString("l" + std::to_string(ayaNumber) + ".2")});
+      subtable->compiledRule.lookupRecords.push_back({3, asStdString("l" + std::to_string(ayaNumber) + ".1")});
     }
   }
 
@@ -1817,9 +1814,9 @@ Lookup* IndoPak::ayanumberskern() {
 }*/
 
 Lookup* IndoPak::ayanumbers() {
-  QString ayaName = "endofaya";
+  std::string ayaName = "endofaya";
 
-  std::uint16_t endofaya = m_layout->glyphCodePerName[ayaName.toStdString()];
+  std::uint16_t endofaya = m_layout->glyphCodePerName[ayaName];
 
   // ligature
   Lookup* ligature = new Lookup(m_layout);
@@ -1833,7 +1830,7 @@ Lookup* IndoPak::ayanumbers() {
   ligaturesubtable->name = asStdString(ligature->name);
 
   for (std::uint16_t i = 286; i > 99; i--) {
-    std::uint16_t code = m_layout->glyphCodePerName[QString("%1%2").arg(ayaName).arg(i).toStdString()];
+    std::uint16_t code = m_layout->glyphCodePerName[ayaName + std::to_string(i)];
 
     int onesdigit = i % 10;
     int tensdigit = (i / 10) % 10;
@@ -1858,7 +1855,7 @@ Lookup* IndoPak::ayanumbers() {
   ligaturesubtable->name = asStdString(ligature->name);
 
   for (std::uint16_t i = 99; i > 9; i--) {
-    std::uint16_t code = m_layout->glyphCodePerName[QString("%1%2").arg(ayaName).arg(i).toStdString()];
+    std::uint16_t code = m_layout->glyphCodePerName[ayaName + std::to_string(i)];
     int onesdigit = i % 10;
     int tensdigit = i / 10;
     if (extended) {
@@ -1881,7 +1878,7 @@ Lookup* IndoPak::ayanumbers() {
   ligaturesubtable->name = asStdString(ligature->name);
 
   for (int i = 1; i < 10; i++) {
-    std::uint16_t code = m_layout->glyphCodePerName[QString("%1%2").arg(ayaName).arg(i).toStdString()];
+    std::uint16_t code = m_layout->glyphCodePerName[ayaName + std::to_string(i)];
     ligaturesubtable->ligatures.push_back({code, {endofaya, (std::uint16_t)(m_layout->unicodeToGlyphCode.at(1632 + i))}});
     ligaturesubtable->ligatures.push_back({code, {(std::uint16_t)(m_layout->unicodeToGlyphCode.at(1632 + i)), endofaya}});
   }
@@ -1949,14 +1946,14 @@ Lookup* IndoPak::forheh() {
 
   for (auto& [glyphKey, glyph] : glyphs) {
     if (classes["haslefttatweel"].contains(glyph.name)) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)((glyph.charlt + 2) * 100));
-      if (glyphs.contains(destName.toStdString())) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+      std::string destName = glyph.name + ".pluslt_" + std::to_string((int)((glyph.charlt + 2) * 100));
+      if (glyphs.contains(destName)) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
       }
     } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt + 2) * 100));
-      if (glyphs.contains(destName.toStdString())) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+      std::string destName = glyph.originalglyph + ".pluslt_" + std::to_string((int)((glyph.charlt + 2) * 100));
+      if (glyphs.contains(destName)) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
       }
     }
   }
@@ -2002,14 +1999,14 @@ Lookup* IndoPak::forhamza() {
 
   for (auto& [glyphKey, glyph] : glyphs) {
     if (classes["haslefttatweel"].contains(glyph.name)) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)((glyph.charlt + tatweel) * 100));
-      if (glyphs.contains(destName.toStdString())) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+      std::string destName = glyph.name + ".pluslt_" + std::to_string((int)((glyph.charlt + tatweel) * 100));
+      if (glyphs.contains(destName)) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
       }
     } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt + tatweel) * 100));
-      if (glyphs.contains(destName.toStdString())) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+      std::string destName = glyph.originalglyph + ".pluslt_" + std::to_string((int)((glyph.charlt + tatweel) * 100));
+      if (glyphs.contains(destName)) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
       }
     }
   }
@@ -2095,26 +2092,26 @@ Lookup* IndoPak::shrinkstretchlt() {
   Lookup* lookup;
   int count = 1;
   for (float i = -0.1; i >= -0.7; i = i - 0.1) {
-    lookup = shrinkstretchlt(i, QString("shr%1").arg(count));
+    lookup = shrinkstretchlt(i, "shr" + std::to_string(count));
     m_layout->addLookup(lookup);
     count++;
   }
 
   return nullptr;
 }
-Lookup* IndoPak::shrinkstretchlt(float lt, QString featureName) {
+Lookup* IndoPak::shrinkstretchlt(float lt, std::string featureName) {
   // m_layout->addLookup(forwaw(), false);
 
-  QString lookupName;
+  std::string lookupName;
 
   if (lt < 0) {
-    lookupName = QString("minuslt_%1").arg(lt * -100);
+    lookupName = "minuslt_" + std::to_string((int)(lt * -100));
   } else {
-    lookupName = QString("pluslt_%1").arg(lt * -100);
+    lookupName = "pluslt_" + std::to_string((int)(lt * -100));
   }
 
   Lookup* single = new Lookup(m_layout);
-  single->name = lookupName.toStdString() + ".l1";
+  single->name = lookupName + ".l1";
   single->feature = "";
   single->type = Lookup::single;
 
@@ -2126,22 +2123,21 @@ Lookup* IndoPak::shrinkstretchlt(float lt, QString featureName) {
 
   for (auto& [glyphKey, glyph] : glyphs) {
     // QRegularExpression reg2("beginchar\\((.*?),(.*?),(.*?),(.*?)\\);");
-    QRegularExpression regname("(.*)[.](minuslt|pluslt)_(.*)");
-    QRegularExpressionMatch match = regname.match(QString::fromStdString(glyph.name));
+    constexpr digitalkhatt::TextView regnamePattern = u"(.*)[.](minuslt|pluslt)_(.*)";
+    digitalkhatt::Regex16 regname(regnamePattern);
+    digitalkhatt::TextString glyphNameU16(glyph.name.begin(), glyph.name.end());
+    digitalkhatt::Regex16Match match = regname.match(glyphNameU16);
     if (match.hasMatch()) {
-      QString name = match.captured(1);
-      QString plusminus = match.captured(2);
-      int value = match.captured(3).toInt();
     } else if (classes["haslefttatweel"].contains(glyph.name)) {
       if (lt < 0) {
-        QString destName = QStringLiteral("%1.minuslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)(lt * -100));
-        if (glyphs.contains(destName.toStdString())) {
-          singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+        std::string destName = glyph.name + ".minuslt_" + std::to_string((int)(lt * -100));
+        if (glyphs.contains(destName)) {
+          singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
         }
       } else {
-        QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)(lt * 100));
-        if (glyphs.contains(destName.toStdString())) {
-          singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+        std::string destName = glyph.name + ".pluslt_" + std::to_string((int)(lt * 100));
+        if (glyphs.contains(destName)) {
+          singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
         }
       }
     }
@@ -2151,22 +2147,22 @@ Lookup* IndoPak::shrinkstretchlt(float lt, QString featureName) {
                                             double w2 = match.captured(2).toDouble();
 
                             if (classes["haslefttatweel"].contains(glyph.name)) {
-                                            QString destName = QStringLiteral("%1.minuslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)(lt * 100));
-                                            if (glyphs.contains(destName.toStdString())) {
-                                                            singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+                                            std::string destName = glyph.name + ".minuslt_" + std::to_string((int)(lt * 100));
+                                            if (glyphs.contains(destName)) {
+                                                            singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
                                             }
                             }
                             else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
-                                            QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt - shrink) * 100));
-                                            if (glyphs.contains(destName.toStdString())) {
-                                                            singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+                                            std::string destName = glyph.originalglyph + ".pluslt_" + std::to_string((int)((glyph.charlt - shrink) * 100));
+                                            if (glyphs.contains(destName)) {
+                                                            singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
                                             }
                             }*/
   }
 
   Lookup* lookup = new Lookup(m_layout);
-  lookup->name = lookupName.toStdString();
-  lookup->feature = featureName.toStdString();
+  lookup->name = lookupName;
+  lookup->feature = featureName;
   lookup->type = Lookup::chainingsub;
   lookup->flags = 0;
 
@@ -2203,14 +2199,14 @@ Lookup* IndoPak::forsmallhighwaw() {
 
   for (auto& [glyphKey, glyph] : glyphs) {
     if (classes["haslefttatweel"].contains(glyph.name)) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.name)).arg((int)((glyph.charlt + tatweel) * 100));
-      if (glyphs.contains(destName.toStdString())) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+      std::string destName = glyph.name + ".pluslt_" + std::to_string((int)((glyph.charlt + tatweel) * 100));
+      if (glyphs.contains(destName)) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
       }
     } else if (classes["haslefttatweel"].contains(glyph.originalglyph) && glyph.name.find("pluslt") != std::string::npos) {
-      QString destName = QStringLiteral("%1.pluslt_%2").arg(QString::fromStdString(glyph.originalglyph)).arg((int)((glyph.charlt + tatweel) * 100));
-      if (glyphs.contains(destName.toStdString())) {
-        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName.toStdString()].charcode;
+      std::string destName = glyph.originalglyph + ".pluslt_" + std::to_string((int)((glyph.charlt + tatweel) * 100));
+      if (glyphs.contains(destName)) {
+        singlesubtable->subst[glyphs[glyph.name].charcode] = glyphs[destName].charcode;
       }
     }
   }
@@ -2264,7 +2260,7 @@ Lookup* IndoPak::populatecvxx() {
 
   for (const auto& alternates : cvxxfeatures) {
     Lookup* alternate = new Lookup(m_layout);
-    alternate->name = QString("cv%1").arg(cvNumber, 2, 10, QLatin1Char('0')).toStdString();
+    alternate->name = std::format("cv{:02d}", cvNumber);
     alternate->feature = alternate->name;
     alternate->type = Lookup::alternate;
 
@@ -2291,7 +2287,7 @@ Lookup* IndoPak::glyphalternates() {
 
   bool isExtended = m_layout->isExtended();
 
-  std::unordered_map<QString, QString> cv01mappings;
+  std::unordered_map<std::string, std::string> cv01mappings;
 
   cv01mappings.insert({"noon.isol", "noon.isol.expa"});
   cv01mappings.insert({"behshape.isol", "behshape.isol.expa"});
@@ -2352,14 +2348,14 @@ Lookup* IndoPak::glyphalternates() {
 
     for (auto mapping : feature.alternates) {
       std::vector<ExtendedGlyph> alternates;
-      const auto glyphName = QString::fromStdString(mapping.glyph);
-      const auto substituteName = QString::fromStdString(mapping.substitute);
-      int code = m_layout->glyphCodePerName[glyphName.toStdString()];
-      int substcode = m_layout->glyphCodePerName[substituteName.toStdString()];
+      const auto& glyphName = mapping.glyph;
+      const auto& substituteName = mapping.substitute;
+      int code = m_layout->glyphCodePerName[glyphName];
+      int substcode = m_layout->glyphCodePerName[substituteName];
       ValueLimits valueLimits;
 
-      if (m_layout->expandableGlyphs.contains(glyphName.toStdString())) {
-        valueLimits = m_layout->expandableGlyphs[glyphName.toStdString()];
+      if (m_layout->expandableGlyphs.contains(glyphName)) {
+        valueLimits = m_layout->expandableGlyphs[glyphName];
       }
 
       if (code == 0 || substcode == 0) {
@@ -2383,7 +2379,7 @@ Lookup* IndoPak::glyphalternates() {
   }
 
   // decomp
-  std::unordered_map<QString, QString> mappingsdecomp;
+  std::unordered_map<std::string, std::string> mappingsdecomp;
 
   mappingsdecomp.insert({"behshape.medi", "behshape.medi.expa"});
 
@@ -2444,13 +2440,13 @@ Lookup* IndoPak::glyphalternates() {
 
   for (auto mapping : mappingsdecomp) {
     std::vector<ExtendedGlyph> alternates;
-    int code = m_layout->glyphCodePerName[mapping.first.toStdString()];
-    int substcode = m_layout->glyphCodePerName[mapping.second.toStdString()];
+    int code = m_layout->glyphCodePerName[mapping.first];
+    int substcode = m_layout->glyphCodePerName[mapping.second];
 
     ValueLimits valueLimits;
 
-    if (m_layout->expandableGlyphs.contains(mapping.first.toStdString())) {
-      valueLimits = m_layout->expandableGlyphs[mapping.first.toStdString()];
+    if (m_layout->expandableGlyphs.contains(mapping.first)) {
+      valueLimits = m_layout->expandableGlyphs[mapping.first];
     }
 
     if (code == 0 || substcode == 0) {
@@ -2486,8 +2482,8 @@ Lookup* IndoPak::glyphalternates() {
 
   for (auto mapping : cv01mappings) {
     std::vector<ExtendedGlyph> alternates;
-    int code = m_layout->glyphCodePerName[mapping.first.toStdString()];
-    int substcode = m_layout->glyphCodePerName[mapping.second.toStdString()];
+    int code = m_layout->glyphCodePerName[mapping.first];
+    int substcode = m_layout->glyphCodePerName[mapping.second];
 
     if (code == 0 || substcode == 0) {
       throw new std::runtime_error("Glyph name invalid");
@@ -2514,7 +2510,7 @@ Lookup* IndoPak::glyphalternates() {
     alternateSubtable->alternates[code] = alternates;
   }
 
-  std::unordered_map<QString, QString> mappingLigaRightOnlys;
+  std::unordered_map<std::string, std::string> mappingLigaRightOnlys;
 
   mappingLigaRightOnlys.insert({"ain.init.finjani", "ain.init"});
   mappingLigaRightOnlys.insert({"hah.init.ii", "hah.init"});
@@ -2524,8 +2520,8 @@ Lookup* IndoPak::glyphalternates() {
 
   for (auto mapping : mappingLigaRightOnlys) {
     std::vector<ExtendedGlyph> alternates;
-    int code = m_layout->glyphCodePerName[mapping.first.toStdString()];
-    int substcode = m_layout->glyphCodePerName[mapping.second.toStdString()];
+    int code = m_layout->glyphCodePerName[mapping.first];
+    int substcode = m_layout->glyphCodePerName[mapping.second];
 
     if (code == 0 || substcode == 0) {
       throw new std::runtime_error("Glyph name invalid");
@@ -2557,7 +2553,7 @@ Lookup* IndoPak::glyphalternates() {
   }
 
   for (auto& glyph : m_layout->expandableGlyphs) {
-    if (cv01mappings.find(QString::fromStdString(glyph.first)) != cv01mappings.end()) continue;
+    if (cv01mappings.find(glyph.first) != cv01mappings.end()) continue;
 
     if (glyph.first == "kasra") continue;
 

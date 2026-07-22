@@ -1,5 +1,6 @@
 #pragma once
-#include <QString>
+#include <string>
+
 #include "GlyphVis.h"
 #include "Lookup.h"
 #include "Subtable.h"
@@ -35,7 +36,7 @@ class IndoPak : public Automedina {
   Lookup* populatecvxx();
   Lookup* glyphalternates();
   // Justification
-  Lookup* shrinkstretchlt(float lt, QString featureName);
+  Lookup* shrinkstretchlt(float lt, std::string featureName);
   Lookup* shrinkstretchlt();
   void addchars();
   void generateGlyphs();
