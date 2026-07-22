@@ -7,7 +7,6 @@
 #include "Subtable.h"
 #include "markpositions.h"
 #include "metafont.h"
-#include <format>
 
 #include "digitalkhatt/core/Regex16.h"
 
@@ -112,16 +111,25 @@ void IndoPak::generateAyas(std::string ayaName, bool colored, int unicode) {
   for (int ayaNumber = 1; ayaNumber <= 286; ayaNumber++) {
     codechar = unicode == -1 ? -1 : codechar + 1;
     std::string setcolored;
+    const auto ayaNumberString = std::to_string(ayaNumber);
     if (colored) {
-      setcolored = std::format("coloredglyph:=\"{}.colored{}\"", ayaName, ayaNumber);
+      setcolored = "coloredglyph:=\"" + ayaName + ".colored" +
+                   ayaNumberString + "\"";
     }
-    std::string data = std::format("beginchar({}{},{},-1,1,-1);\n%beginbody\ngenAyaNumber({}, {},380);{};endchar;", ayaName, ayaNumber, codechar, ayaName, ayaNumber, setcolored);
+    std::string data = "beginchar(" + ayaName + ayaNumberString + "," +
+                       std::to_string(codechar) +
+                       ",-1,1,-1);\n%beginbody\ngenAyaNumber(" + ayaName +
+                       ", " + ayaNumberString + ",380);" + setcolored +
+                       ";endchar;";
     m_layout->font->execute(data);
-    addedGlyphs[std::format("{}{}", ayaName, ayaNumber)] = data;
+    addedGlyphs[ayaName + ayaNumberString] = data;
     if (colored) {
-      data = std::format("beginchar({}.colored{},-1,-1,5,-1);\n%beginbody\ngenAyaNumber({}.colored, {},380);endchar;", ayaName, ayaNumber, ayaName, ayaNumber);
+      const auto coloredName = ayaName + ".colored" + ayaNumberString;
+      data = "beginchar(" + coloredName +
+             ",-1,-1,5,-1);\n%beginbody\ngenAyaNumber(" + ayaName +
+             ".colored, " + ayaNumberString + ",380);endchar;";
       m_layout->font->execute(data);
-      addedGlyphs[std::format("{}.colored{}", ayaName, ayaNumber)] = data;
+      addedGlyphs[coloredName] = data;
     }
   }
 }
@@ -2260,7 +2268,8 @@ Lookup* IndoPak::populatecvxx() {
 
   for (const auto& alternates : cvxxfeatures) {
     Lookup* alternate = new Lookup(m_layout);
-    alternate->name = std::format("cv{:02d}", cvNumber);
+    alternate->name = "cv" + std::string(cvNumber < 10 ? "0" : "") +
+                      std::to_string(cvNumber);
     alternate->feature = alternate->name;
     alternate->type = Lookup::alternate;
 
