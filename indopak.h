@@ -34,7 +34,6 @@ class IndoPak : public Automedina {
   Lookup* ayanumberskern();
   Lookup* rehwawcursivecpp();
   Lookup* allCursiveJoin(bool rtl);
-  Lookup* populatecvxx();
   Lookup* glyphalternates();
   // Justification
   Lookup* shrinkstretchlt(float lt, std::string featureName);

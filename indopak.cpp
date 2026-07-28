@@ -605,8 +605,6 @@ Lookup* IndoPak::getLookup(std::string lookupName) {
     return shrinkstretchlt();
   } else if (lookupName == "forsmallhighwaw") {
     return forsmallhighwaw();
-  } else if (lookupName == "populatecvxx") {
-    return populatecvxx();
   } else if (lookupName == "glyphalternates") {
     return glyphalternates();
   } else if (lookupName == "allcursivejoinnortl") {
@@ -2261,30 +2259,6 @@ Lookup* IndoPak::forsmallhighwaw() {
   newsubtable->compiledRule.lookupRecords.push_back({1, "l2"});
 
   return lookup;
-}
-
-Lookup* IndoPak::populatecvxx() {
-  int cvNumber = 1;
-
-  for (const auto& alternates : cvxxfeatures) {
-    Lookup* alternate = new Lookup(m_layout);
-    alternate->name = "cv" + std::string(cvNumber < 10 ? "0" : "") +
-                      std::to_string(cvNumber);
-    alternate->feature = alternate->name;
-    alternate->type = Lookup::alternate;
-
-    m_layout->addLookup(alternate);
-
-    AlternateSubtable* alternateSubtable = new AlternateSubtable(alternate);
-    alternate->subtables.push_back(alternateSubtable);
-    alternate->name = alternate->name;
-
-    alternateSubtable->alternates = alternates;
-
-    cvNumber++;
-  }
-
-  return nullptr;
 }
 
 Lookup* IndoPak::glyphalternates() {
