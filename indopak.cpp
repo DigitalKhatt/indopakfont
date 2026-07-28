@@ -2639,3 +2639,6 @@ Lookup* IndoPak::glyphalternates() {
   return nullptr;
 }
 }  // namespace indopak
+void indopak::IndoPak::generateSubstEquivGlyphs() {
+  m_layout->generateSubstEquivGlyphsLegacy();
+}

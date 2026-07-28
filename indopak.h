@@ -14,6 +14,7 @@ class IndoPak : public Automedina {
   Lookup* getLookup(std::string lookupName) override;
   CalcAnchor getanchorCalcFunctions(std::string functionName, Subtable* subtable) override;
   CursiveAnchorFunc getCursiveFunctions(std::string functionName, Subtable* subtable) override;
+  void generateSubstEquivGlyphs() override;
   ~IndoPak() {}
 
  private:
